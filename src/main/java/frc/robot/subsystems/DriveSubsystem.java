@@ -1,5 +1,7 @@
 package frc.robot.subsystems;
 
+import com.kauailabs.navx.frc.AHRS;
+
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -9,7 +11,6 @@ import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.util.WPIUtilJNI;
-import edu.wpi.first.wpilibj.ADIS16448_IMU;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.DriveConstants;
 import frc.utils.SwerveUtils;
@@ -24,7 +25,7 @@ public class DriveSubsystem extends SubsystemBase {
   private final SwerveModule m_frontRight = new SwerveModule(
     DriveConstants.kFrontRightDrivingCanId,
     DriveConstants.kFrontRightTurningCanId,
-    DriveConstants.kFrontRightChassicAngularOffset);
+    DriveConstants.kFrontRightChassisAngularOffset);
   
   private final SwerveModule m_rearLeft = new SwerveModule(
     DriveConstants.kRearLeftDrivingCanId,
@@ -37,7 +38,7 @@ public class DriveSubsystem extends SubsystemBase {
     DriveConstants.kBackRightChassisAngularOffset);
   
   // Gyroscope
-  private final ADIS16448_IMU m_gyro = new ADIS16448_IMU();
+  private final AHRS m_gyro = new AHRS();
 
   // Slew rate filter variables for controlling lateral acceleration
   private double m_currentRotation = 0.0;
@@ -176,6 +177,23 @@ public class DriveSubsystem extends SubsystemBase {
     m_frontRight.setDesiredState(swerveModuleStates[1]);
     m_rearLeft.setDesiredState(swerveModuleStates[2]);
     m_rearRight.setDesiredState(swerveModuleStates[3]);
+
+    // m_frontLeft.setDesiredState(new SwerveModuleState(
+    //   0,
+    //   new Rotation2d(Math.PI/2)
+    // ));
+    // m_frontRight.setDesiredState(new SwerveModuleState(
+    //   0,
+    //   new Rotation2d(Math.PI/2)
+    // ));
+    // m_rearLeft.setDesiredState(new SwerveModuleState(
+    //   0,
+    //   new Rotation2d(Math.PI/2)
+    // ));
+    // m_rearLeft.setDesiredState(new SwerveModuleState(
+    //   0,
+    //   new Rotation2d(Math.PI/2)
+    // ));
   }
 
   /**

@@ -44,7 +44,7 @@ public class RobotContainer {
    */
   public RobotContainer() {
     // Configure button bindings
-    configureButtonBindings();
+    // configureButtonBindings();
 
     // Configure default commands
     m_robotDrive.setDefaultCommand(
@@ -57,7 +57,7 @@ public class RobotContainer {
           OIConstants.kDriveDeadband),
           -MathUtil.applyDeadband(m_driverController.getZ(),
           OIConstants.kDriveDeadband),
-          true, true),
+          false, true),
       m_robotDrive));
   }
 
