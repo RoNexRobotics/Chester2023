@@ -51,7 +51,7 @@ public class DriveSubsystem extends SubsystemBase {
     m_frontLeftTurnEncoder = m_frontLeftTurnMotor.getEncoder();
     m_frontRightTurnEncoder = m_frontRightTurnMotor.getEncoder();
     m_rearLeftTurnEncoder = m_rearLeftTurnMotor.getEncoder();
-    m_rearLeftTurnEncoder = m_rearRightTurnMotor.getEncoder();
+    m_rearRightTurnEncoder = m_rearRightTurnMotor.getEncoder();
 
     m_leftDrive = new MotorControllerGroup(m_frontLeftDriveMotor, m_rearLeftDriveMotor);
     m_rightDrive = new MotorControllerGroup(m_frontRightDriveMotor, m_rearRightDriveMotor);
@@ -96,11 +96,13 @@ public class DriveSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
-    SmartDashboard.putNumber("Encoder Value", m_frontLeftTurnEncoder.getPosition());
+    SmartDashboard.putNumber("Front Left Encoder", m_frontLeftTurnEncoder.getPosition());
+    SmartDashboard.putNumber("Front Right Encoder", m_frontRightTurnEncoder.getPosition());
+    SmartDashboard.putNumber("Rear Left Encoder", m_rearLeftTurnEncoder.getPosition());
+    SmartDashboard.putNumber("Rear Right Encoder", m_rearRightTurnEncoder.getPosition());
   }
 
   public void drive(double ySpeed, double rotSpeed) {
-    System.out.println(ySpeed);
     m_driveTrain.arcadeDrive(
       ySpeed * DriveConstants.kPowerPercent,
       rotSpeed * DriveConstants.kAngularPowerPercent

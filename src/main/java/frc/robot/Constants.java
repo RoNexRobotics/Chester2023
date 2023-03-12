@@ -38,6 +38,10 @@ public final class Constants {
     public static final double kFF = 0;
   }
 
+  public static final class VacuumConstants {
+    public static final int kVacuumMotorId = 20;
+  }
+
   public static class OperatorConstants {
     public static final int kDriverControllerPort = 0;
     public static final double kDriverControllerDeadband = 0.2;
