@@ -7,7 +7,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.VacuumConstants;
 
 public class VacuumSubsystem extends SubsystemBase {
-  VictorSPX m_vacuumMotor = new VictorSPX(20);
+  private VictorSPX m_vacuumMotor;
 
   public VacuumSubsystem() {
     m_vacuumMotor = new VictorSPX(VacuumConstants.kVacuumMotorId);
@@ -18,6 +18,6 @@ public class VacuumSubsystem extends SubsystemBase {
   }
 
   public void off() {
-    m_vacuumMotor.set(ControlMode.PercentOutput, 1);
+    m_vacuumMotor.set(ControlMode.PercentOutput, 0);
   }
 }
