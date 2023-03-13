@@ -14,6 +14,7 @@ package frc.robot;
  */
 public final class Constants {
   public static class DriveConstants {
+    // Spark Max CAN IDs
     public static final int kFrontLeftDriveMotorId = 1;
     public static final int kRearLeftDriveMotorId = 3;
     public static final int kFrontRightDriveMotorId = 5;
@@ -27,11 +28,10 @@ public final class Constants {
     public static final boolean kLeftDriveInverted = true;
     public static final boolean kRightDriveInverted = false;
 
-    public static final double kPowerPercent = 0.7;
-    public static final double kAngularPowerPercent = 0.7;
-  }
+    public static final double kPowerPercent = 0.9;
+    public static final double kAngularPowerPercent = 0.9;
 
-  public static final class ModuleConstants {
+    // PID values
     public static final double kP = 1;
     public static final double kI = 0;
     public static final double kD = 0;

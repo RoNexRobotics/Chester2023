@@ -11,7 +11,6 @@ import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.DriveConstants;
-import frc.robot.Constants.ModuleConstants;
 import frc.robot.Constants.OperatorConstants;
 
 public class DriveSubsystem extends SubsystemBase {
@@ -68,25 +67,25 @@ public class DriveSubsystem extends SubsystemBase {
     m_rearLeftTurnPIDController = m_rearLeftTurnMotor.getPIDController();
     m_rearRightTurnPIDController = m_rearRightTurnMotor.getPIDController();
 
-    m_frontLeftTurnPIDController.setP(ModuleConstants.kP);
-    m_frontLeftTurnPIDController.setI(ModuleConstants.kI);
-    m_frontLeftTurnPIDController.setD(ModuleConstants.kD);
-    m_frontLeftTurnPIDController.setFF(ModuleConstants.kFF);
+    m_frontLeftTurnPIDController.setP(DriveConstants.kP);
+    m_frontLeftTurnPIDController.setI(DriveConstants.kI);
+    m_frontLeftTurnPIDController.setD(DriveConstants.kD);
+    m_frontLeftTurnPIDController.setFF(DriveConstants.kFF);
 
-    m_frontRightTurnPIDController.setP(ModuleConstants.kP);
-    m_frontRightTurnPIDController.setI(ModuleConstants.kI);
-    m_frontRightTurnPIDController.setD(ModuleConstants.kD);
-    m_frontRightTurnPIDController.setFF(ModuleConstants.kFF);
+    m_frontRightTurnPIDController.setP(DriveConstants.kP);
+    m_frontRightTurnPIDController.setI(DriveConstants.kI);
+    m_frontRightTurnPIDController.setD(DriveConstants.kD);
+    m_frontRightTurnPIDController.setFF(DriveConstants.kFF);
 
-    m_rearLeftTurnPIDController.setP(ModuleConstants.kP);
-    m_rearLeftTurnPIDController.setI(ModuleConstants.kI);
-    m_rearLeftTurnPIDController.setD(ModuleConstants.kD);
-    m_rearLeftTurnPIDController.setFF(ModuleConstants.kFF);
+    m_rearLeftTurnPIDController.setP(DriveConstants.kP);
+    m_rearLeftTurnPIDController.setI(DriveConstants.kI);
+    m_rearLeftTurnPIDController.setD(DriveConstants.kD);
+    m_rearLeftTurnPIDController.setFF(DriveConstants.kFF);
 
-    m_rearRightTurnPIDController.setP(ModuleConstants.kP);
-    m_rearRightTurnPIDController.setI(ModuleConstants.kI);
-    m_rearRightTurnPIDController.setD(ModuleConstants.kD);
-    m_rearRightTurnPIDController.setFF(ModuleConstants.kFF);
+    m_rearRightTurnPIDController.setP(DriveConstants.kP);
+    m_rearRightTurnPIDController.setI(DriveConstants.kI);
+    m_rearRightTurnPIDController.setD(DriveConstants.kD);
+    m_rearRightTurnPIDController.setFF(DriveConstants.kFF);
 
     m_frontLeftTurnPIDController.setReference(0, ControlType.kPosition);
     m_frontRightTurnPIDController.setReference(0, ControlType.kPosition);
