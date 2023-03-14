@@ -28,11 +28,11 @@ public final class Constants {
     public static final boolean kLeftDriveInverted = true;
     public static final boolean kRightDriveInverted = false;
 
-    public static final double kPowerPercent = 0.9;
-    public static final double kAngularPowerPercent = 0.9;
+    public static final double kPowerPercent = 0.8;
+    public static final double kAngularPowerPercent = 0.8;
 
     // PID values
-    public static final double kP = 1;
+    public static final double kP = 0.5;
     public static final double kI = 0;
     public static final double kD = 0;
     public static final double kFF = 0;
