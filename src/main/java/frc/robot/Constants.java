@@ -30,6 +30,7 @@ public final class Constants {
 
     public static final double kPowerPercent = 0.8;
     public static final double kAngularPowerPercent = 0.8;
+    public static final double kSwervePowerPercent = 0.6;
 
     // PID values
     public static final double kP = 0.5;

@@ -113,17 +113,17 @@ public class RobotContainer {
         if (m_limelightX.getDouble(0) != 0) {
           angularPowerPercent = 1 / m_limelightX.getDouble(0.1);
         } else {
-          angularPowerPercent = 0.5;
+          angularPowerPercent = 0;
         }
 
         System.out.println(angularPowerPercent);
 
         if (m_limelightX.getDouble(0) > 1) {
-          m_driveSubsystem.drive(0, -angularPowerPercent, 0);
+          m_driveSubsystem.drive(0, -angularPowerPercent);
         } else if (m_limelightX.getDouble(0) < -1) {
-          m_driveSubsystem.drive(0, angularPowerPercent, 0);
+          m_driveSubsystem.drive(0, angularPowerPercent);
         } else {
-          m_driveSubsystem.drive(0, 0, 0);
+          m_driveSubsystem.drive(0, 0);
         }
       },
       m_driveSubsystem).withName("Auto");
