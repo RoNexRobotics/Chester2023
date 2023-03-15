@@ -17,6 +17,10 @@ public class VacuumSubsystem extends SubsystemBase {
     m_vacuumMotor.set(ControlMode.PercentOutput, 1);
   }
 
+  public void onInReverse() {
+    m_vacuumMotor.set(ControlMode.PercentOutput, -1);
+  }
+
   public void off() {
     m_vacuumMotor.set(ControlMode.PercentOutput, 0);
   }

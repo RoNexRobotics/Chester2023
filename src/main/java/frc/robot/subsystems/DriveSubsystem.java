@@ -126,35 +126,15 @@ public class DriveSubsystem extends SubsystemBase {
       m_desiredAngle = 0;
 
       m_driveTrain.arcadeDrive(
-        ySpeed * DriveConstants.kPowerPercent,
-        rotSpeed * DriveConstants.kAngularPowerPercent
+        ySpeed,
+        rotSpeed
       );
-    } else if (pov == 315) { // Up-left
-      m_desiredAngle = -1.5;
-
-      m_driveTrain.arcadeDrive(DriveConstants.kSwervePowerPercent, 0);
     } else if (pov == 270) { // Left
       m_desiredAngle = -3;
 
       m_driveTrain.arcadeDrive(DriveConstants.kSwervePowerPercent, 0);
-    } else if (pov == 225) { // Down-left
-      m_desiredAngle = -1.5;
-
-      m_driveTrain.arcadeDrive(-DriveConstants.kSwervePowerPercent, 0);
-    } else if (pov == 180) { // Down
-      m_desiredAngle = 0;
-
-      m_driveTrain.arcadeDrive(-DriveConstants.kSwervePowerPercent, 0);
-    } else if (pov == 135) { // Down-right
-      m_desiredAngle = 1.5;
-
-      m_driveTrain.arcadeDrive(-DriveConstants.kSwervePowerPercent, 0);
     } else if (pov == 90) { // Right
       m_desiredAngle = 3;
-
-      m_driveTrain.arcadeDrive(DriveConstants.kSwervePowerPercent, 0);
-    } else if (pov == 45) { // Up-right
-      m_desiredAngle = -1.5;
 
       m_driveTrain.arcadeDrive(DriveConstants.kSwervePowerPercent, 0);
     }
@@ -164,8 +144,8 @@ public class DriveSubsystem extends SubsystemBase {
     m_desiredAngle = 0;
     
     m_driveTrain.arcadeDrive(
-      ySpeed * DriveConstants.kPowerPercent,
-      rotSpeed * DriveConstants.kAngularPowerPercent
+      ySpeed,
+      rotSpeed
     );
   }
 

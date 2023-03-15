@@ -8,6 +8,7 @@ import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -15,6 +16,7 @@ import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.VacuumSubsystem;
@@ -32,19 +34,18 @@ public class RobotContainer {
 
   // Controllers
   private Joystick m_driverController = new Joystick(OperatorConstants.kDriverControllerPort);
+  private XboxController m_armController = new XboxController(OperatorConstants.kArmControllerPort);
 
   // Network Table Instance
   private NetworkTableInstance m_netInst;
   private NetworkTable m_Limelight;
   private NetworkTableEntry m_limelightX;
-  private NetworkTableEntry m_limelightY;
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     m_netInst = NetworkTableInstance.getDefault();
     m_Limelight = m_netInst.getTable("limelight");
     m_limelightX = m_Limelight.getEntry("tx");
-    m_limelightY = m_Limelight.getEntry("ty");
 
     // Configure the trigger bindings
     configureBindings();
@@ -52,8 +53,8 @@ public class RobotContainer {
     m_driveSubsystem.setDefaultCommand(
       new RunCommand(
         () -> m_driveSubsystem.drive(
-          -m_driverController.getY(),
-          -m_driverController.getZ(),
+          -m_driverController.getY() * DriveConstants.kPowerPercent,
+          -m_driverController.getZ() * DriveConstants.kAngularPowerPercent,
           m_driverController.getPOV()
         ),
         m_driveSubsystem).withName("Joystick Drive")
@@ -79,10 +80,20 @@ public class RobotContainer {
    * joysticks}.
    */
   private void configureBindings() {
-    new JoystickButton(m_driverController, 1).onTrue(
+    new JoystickButton(m_armController, XboxController.Button.kRightBumper.value).onTrue(
       new RunCommand(
         () -> m_vacuumSubsystem.on(),
         m_vacuumSubsystem).withName("On")
+    ).onFalse(
+      new RunCommand(
+        () -> m_vacuumSubsystem.off(),
+        m_vacuumSubsystem).withName("Off")
+    );
+
+    new JoystickButton(m_armController, XboxController.Button.kLeftBumper.value).onTrue(
+      new RunCommand(
+        () -> m_vacuumSubsystem.onInReverse(),
+        m_vacuumSubsystem).withName("On In Reverse")
     ).onFalse(
       new RunCommand(
         () -> m_vacuumSubsystem.off(),
@@ -107,23 +118,19 @@ public class RobotContainer {
     return new RunCommand(
       () -> {
         SmartDashboard.putNumber("Limelight X", m_limelightX.getDouble(0));
-        SmartDashboard.putNumber("Limelight Y", m_limelightY.getDouble(0));
 
-        double angularPowerPercent = 0;
-        if (m_limelightX.getDouble(0) != 0) {
-          angularPowerPercent = 1 / m_limelightX.getDouble(0.1);
+        double limelightX = m_limelightX.getDouble(0);
+        
+        if (limelightX <= -10) {
+          m_driveSubsystem.drive(0.4, 0.7);
+        } else if (limelightX >= 10) {
+          m_driveSubsystem.drive(0.4, -0.7);
+        } else if (limelightX > -10 && limelightX < -1) {
+          m_driveSubsystem.drive(0.5, 0.4);
+        } else if (limelightX < 10 && limelightX > 1) {
+          m_driveSubsystem.drive(0.5, -0.4);
         } else {
-          angularPowerPercent = 0;
-        }
-
-        System.out.println(angularPowerPercent);
-
-        if (m_limelightX.getDouble(0) > 1) {
-          m_driveSubsystem.drive(0, -angularPowerPercent);
-        } else if (m_limelightX.getDouble(0) < -1) {
-          m_driveSubsystem.drive(0, angularPowerPercent);
-        } else {
-          m_driveSubsystem.drive(0, 0);
+          m_driveSubsystem.drive(0.4, 0);
         }
       },
       m_driveSubsystem).withName("Auto");

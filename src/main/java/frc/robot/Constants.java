@@ -33,7 +33,7 @@ public final class Constants {
     public static final double kSwervePowerPercent = 0.6;
 
     // PID values
-    public static final double kP = 0.5;
+    public static final double kP = 0.4;
     public static final double kI = 0;
     public static final double kD = 0;
     public static final double kFF = 0;
@@ -46,5 +46,6 @@ public final class Constants {
   public static class OperatorConstants {
     public static final int kDriverControllerPort = 0;
     public static final double kDriverControllerDeadband = 0.2;
+    public static final int kArmControllerPort = 1;
   }
 }
