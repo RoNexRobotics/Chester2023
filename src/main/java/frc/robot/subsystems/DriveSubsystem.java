@@ -7,6 +7,7 @@ import com.revrobotics.CANSparkMax.ControlType;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
+import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -15,30 +16,34 @@ import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.OperatorConstants;
 
 public class DriveSubsystem extends SubsystemBase {
-  CANSparkMax m_frontLeftDriveMotor;
-  CANSparkMax m_frontLeftTurnMotor;
-  CANSparkMax m_frontRightDriveMotor;
-  CANSparkMax m_frontRightTurnMotor;
-  CANSparkMax m_rearLeftDriveMotor;
-  CANSparkMax m_rearLeftTurnMotor;
-  CANSparkMax m_rearRightDriveMotor;
-  CANSparkMax m_rearRightTurnMotor;
+  private CANSparkMax m_frontLeftDriveMotor;
+  private CANSparkMax m_frontLeftTurnMotor;
+  private CANSparkMax m_frontRightDriveMotor;
+  private CANSparkMax m_frontRightTurnMotor;
+  private CANSparkMax m_rearLeftDriveMotor;
+  private CANSparkMax m_rearLeftTurnMotor;
+  private CANSparkMax m_rearRightDriveMotor;
+  private CANSparkMax m_rearRightTurnMotor;
 
-  RelativeEncoder m_frontLeftTurnEncoder;
-  RelativeEncoder m_frontRightTurnEncoder;
-  RelativeEncoder m_rearLeftTurnEncoder;
-  RelativeEncoder m_rearRightTurnEncoder;
+  private RelativeEncoder m_frontLeftTurnEncoder;
+  private RelativeEncoder m_frontRightTurnEncoder;
+  private RelativeEncoder m_rearLeftTurnEncoder;
+  private RelativeEncoder m_rearRightTurnEncoder;
 
-  DifferentialDrive m_driveTrain;
-  MotorControllerGroup m_leftDrive;
-  MotorControllerGroup m_rightDrive;
+  private DifferentialDrive m_driveTrain;
+  private MotorControllerGroup m_leftDrive;
+  private MotorControllerGroup m_rightDrive;
 
-  SparkMaxPIDController m_frontLeftTurnPIDController;
-  SparkMaxPIDController m_frontRightTurnPIDController;
-  SparkMaxPIDController m_rearLeftTurnPIDController;
-  SparkMaxPIDController m_rearRightTurnPIDController;
+  private SparkMaxPIDController m_frontLeftTurnPIDController;
+  private SparkMaxPIDController m_frontRightTurnPIDController;
+  private SparkMaxPIDController m_rearLeftTurnPIDController;
+  private SparkMaxPIDController m_rearRightTurnPIDController;
 
-  double m_desiredAngle = 0;
+  private SlewRateLimiter m_magLimiter = new SlewRateLimiter(DriveConstants.kMagnitudeSlewRate);
+  private SlewRateLimiter m_rotLimiter = new SlewRateLimiter(DriveConstants.kRotationalSlewRate);
+
+  private double m_desiredAngle = 0;
+  private boolean m_alignModules = true;
 
   public DriveSubsystem() {
     m_frontLeftDriveMotor = new CANSparkMax(DriveConstants.kFrontLeftDriveMotorId, MotorType.kBrushless);
@@ -108,12 +113,12 @@ public class DriveSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
-    m_frontLeftTurnPIDController.setReference(m_desiredAngle, ControlType.kPosition);
-    m_frontRightTurnPIDController.setReference(m_desiredAngle, ControlType.kPosition);
-    m_rearLeftTurnPIDController.setReference(m_desiredAngle, ControlType.kPosition);
-    m_rearRightTurnPIDController.setReference(m_desiredAngle, ControlType.kPosition);
-
-    SmartDashboard.putNumber("Desired Angle", m_desiredAngle);
+    if (m_alignModules) {
+      m_frontLeftTurnPIDController.setReference(m_desiredAngle, ControlType.kPosition);
+      m_frontRightTurnPIDController.setReference(m_desiredAngle, ControlType.kPosition);
+      m_rearLeftTurnPIDController.setReference(m_desiredAngle, ControlType.kPosition);
+      m_rearRightTurnPIDController.setReference(m_desiredAngle, ControlType.kPosition);
+    }
 
     SmartDashboard.putNumber("Front Left Encoder", m_frontLeftTurnEncoder.getPosition());
     SmartDashboard.putNumber("Front Right Encoder", m_frontRightTurnEncoder.getPosition());
@@ -126,17 +131,15 @@ public class DriveSubsystem extends SubsystemBase {
       m_desiredAngle = 0;
 
       m_driveTrain.arcadeDrive(
-        ySpeed,
-        rotSpeed
+        // ySpeed,
+        // rotSpeed
+        m_magLimiter.calculate(ySpeed),
+        m_rotLimiter.calculate(rotSpeed)
       );
-    } else if (pov == 270) { // Left
-      m_desiredAngle = -3;
-
-      m_driveTrain.arcadeDrive(DriveConstants.kSwervePowerPercent, 0);
-    } else if (pov == 90) { // Right
-      m_desiredAngle = 3;
-
-      m_driveTrain.arcadeDrive(DriveConstants.kSwervePowerPercent, 0);
+    } else if (pov == 270) { // Swerve left
+      swerveLeft(DriveConstants.kSwervePowerPercent);
+    } else if (pov == 90) { // Swerve right
+      swerveRight(DriveConstants.kSwervePowerPercent);
     }
   }
 
@@ -144,9 +147,27 @@ public class DriveSubsystem extends SubsystemBase {
     m_desiredAngle = 0;
     
     m_driveTrain.arcadeDrive(
-      ySpeed,
-      rotSpeed
+      // ySpeed,
+      // rotSpeed
+      m_magLimiter.calculate(ySpeed),
+      m_rotLimiter.calculate(rotSpeed)
     );
+  }
+
+  public void swerveLeft(double speed) {
+    m_desiredAngle = -3;
+    
+    m_driveTrain.arcadeDrive(speed, 0);
+  }
+
+  public void swerveRight(double speed) {
+    m_desiredAngle = 3;
+    
+    m_driveTrain.arcadeDrive(speed, 0);
+  }
+
+  public void alignModulesEnabled(boolean enabled) {
+    m_alignModules = enabled;
   }
 
   public void resetEncoders() {

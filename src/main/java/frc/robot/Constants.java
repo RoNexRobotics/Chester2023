@@ -13,7 +13,7 @@ package frc.robot;
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
-  public static class DriveConstants {
+  public static final class DriveConstants {
     // Spark Max CAN IDs
     public static final int kFrontLeftDriveMotorId = 1;
     public static final int kRearLeftDriveMotorId = 3;
@@ -28,6 +28,7 @@ public final class Constants {
     public static final boolean kLeftDriveInverted = true;
     public static final boolean kRightDriveInverted = false;
 
+    // Speeds
     public static final double kPowerPercent = 0.8;
     public static final double kAngularPowerPercent = 0.8;
     public static final double kSwervePowerPercent = 0.6;
@@ -37,13 +38,17 @@ public final class Constants {
     public static final double kI = 0;
     public static final double kD = 0;
     public static final double kFF = 0;
+
+    // Slew rate values
+    public static final double kMagnitudeSlewRate = 1.8;
+    public static final double kRotationalSlewRate = 2.0;
   }
 
   public static final class VacuumConstants {
     public static final int kVacuumMotorId = 20;
   }
 
-  public static class OperatorConstants {
+  public static final class OperatorConstants {
     public static final int kDriverControllerPort = 0;
     public static final double kDriverControllerDeadband = 0.2;
     public static final int kArmControllerPort = 1;

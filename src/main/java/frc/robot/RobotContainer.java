@@ -38,14 +38,14 @@ public class RobotContainer {
 
   // Network Table Instance
   private NetworkTableInstance m_netInst;
-  private NetworkTable m_Limelight;
+  private NetworkTable m_limelight;
   private NetworkTableEntry m_limelightX;
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     m_netInst = NetworkTableInstance.getDefault();
-    m_Limelight = m_netInst.getTable("limelight");
-    m_limelightX = m_Limelight.getEntry("tx");
+    m_limelight = m_netInst.getTable("limelight");
+    m_limelightX = m_limelight.getEntry("tx");
 
     // Configure the trigger bindings
     configureBindings();
@@ -61,7 +61,7 @@ public class RobotContainer {
     );
 
     m_vacuumSubsystem.setDefaultCommand(
-      new RunCommand(
+      new InstantCommand(
         () -> m_vacuumSubsystem.off(),
         m_vacuumSubsystem).withName("Off")
     );
@@ -80,6 +80,7 @@ public class RobotContainer {
    * joysticks}.
    */
   private void configureBindings() {
+    // Vacuum forward
     new JoystickButton(m_armController, XboxController.Button.kRightBumper.value).onTrue(
       new RunCommand(
         () -> m_vacuumSubsystem.on(),
@@ -90,6 +91,7 @@ public class RobotContainer {
         m_vacuumSubsystem).withName("Off")
     );
 
+    // Vacuum reversed
     new JoystickButton(m_armController, XboxController.Button.kLeftBumper.value).onTrue(
       new RunCommand(
         () -> m_vacuumSubsystem.onInReverse(),
@@ -100,10 +102,17 @@ public class RobotContainer {
         m_vacuumSubsystem).withName("Off")
     );
 
-    new JoystickButton(m_driverController, 12).onTrue(
+    // Reset drive encoders
+    new JoystickButton(m_driverController, 6).onTrue(
       new InstantCommand(
-        () -> m_driveSubsystem.resetEncoders(),
-        m_driveSubsystem)
+        () -> m_driveSubsystem.alignModulesEnabled(false)
+      )
+    ).onFalse(
+      new InstantCommand(
+        () -> m_driveSubsystem.alignModulesEnabled(true)
+      ).andThen(
+        () -> m_driveSubsystem.resetEncoders()
+      )
     );
   }
 
@@ -121,16 +130,16 @@ public class RobotContainer {
 
         double limelightX = m_limelightX.getDouble(0);
         
-        if (limelightX <= -10) {
+        if (limelightX <= -10) { // Left fast-rotation zone
           m_driveSubsystem.drive(0.4, 0.7);
-        } else if (limelightX >= 10) {
+        } else if (limelightX >= 10) { // Right fast-rotation zone
           m_driveSubsystem.drive(0.4, -0.7);
-        } else if (limelightX > -10 && limelightX < -1) {
+        } else if (limelightX > -10 && limelightX < -1) { // Left slow-rotation zone
           m_driveSubsystem.drive(0.5, 0.4);
-        } else if (limelightX < 10 && limelightX > 1) {
+        } else if (limelightX < 10 && limelightX > 1) { // Right slow-rotation zone
           m_driveSubsystem.drive(0.5, -0.4);
-        } else {
-          m_driveSubsystem.drive(0.4, 0);
+        } else { // Target achieved
+          m_driveSubsystem.drive(0.5, 0);
         }
       },
       m_driveSubsystem).withName("Auto");
