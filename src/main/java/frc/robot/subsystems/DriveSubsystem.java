@@ -198,6 +198,18 @@ public class DriveSubsystem extends SubsystemBase {
   public void trackVisionTarget() {
     double limelightX = m_limelightX.getDouble(0);
 
+    if (limelightX <= -10) { // Left fast-rotation zone
+      drive(0.4, 0.8, false);
+    } else if (limelightX >= 10) { // Right fast-rotation zone
+      drive(0.4, -0.8, false);
+    } else if (limelightX > -10 && limelightX < -1) { // Left slow-rotation zone
+      drive(0.5, 0.4, false);
+    } else if (limelightX < 10 && limelightX > 1) { // Right slow-rotation zone
+      drive(0.5, -0.4, false);
+    } else { // Target achieved
+      drive(0.5, 0, false);
+    }
+
     drive(0, m_visionPIDController.calculate(limelightX, 0), false);
   }
 

@@ -58,7 +58,7 @@ public final class Constants {
   public static final class AutoConstants {
     // Vision PID values
     // TODO: Tune PID values
-    public static final double kVisionP = 0.5;
+    public static final double kVisionP = 1;
     public static final double kVisionI = 0;
     public static final double kVisionD = 0;
   }
