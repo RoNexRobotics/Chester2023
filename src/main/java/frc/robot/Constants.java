@@ -34,14 +34,15 @@ public final class Constants {
     public static final double kSwervePowerPercent = 0.6;
 
     // PID values
-    public static final double kP = 0.3;
-    public static final double kI = 0;
-    public static final double kD = 0;
+    // TODO: Tune PID values (Specifically the P and D terms)
+    public static final double kP = 0.3; // Larger value reacts very quickly to large error, while smaller value is less reactive
+    public static final double kI = 0; // Larger value will nudge onto target more proactively
+    public static final double kD = 0; // Larger value dampens more and will try to slow down more aggressively
     public static final double kFF = 0;
 
     // Slew rate values
-    public static final double kMagnitudeSlewRate = 1.8;
-    public static final double kRotationalSlewRate = 2.0;
+    public static final double kMagnitudeSlewRate = 0.5;
+    public static final double kRotationalSlewRate = 0.5;
   }
 
   public static final class VacuumConstants {
@@ -52,5 +53,13 @@ public final class Constants {
     public static final int kDriverControllerPort = 0;
     public static final double kDriverControllerDeadband = 0.2;
     public static final int kArmControllerPort = 1;
+  }
+
+  public static final class AutoConstants {
+    // Vision PID values
+    // TODO: Tune PID values
+    public static final double kVisionP = 0.5;
+    public static final double kVisionI = 0;
+    public static final double kVisionD = 0;
   }
 }

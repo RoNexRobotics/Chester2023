@@ -7,11 +7,16 @@ import com.revrobotics.CANSparkMax.ControlType;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.filter.SlewRateLimiter;
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.DriveConstants;
 
 public class DriveSubsystem extends SubsystemBase {
@@ -34,6 +39,8 @@ public class DriveSubsystem extends SubsystemBase {
   private SparkMaxPIDController m_rearLeftTurnPIDController;
   private SparkMaxPIDController m_rearRightTurnPIDController;
 
+  private PIDController m_visionPIDController;
+
   private DifferentialDrive m_driveTrain;
   private MotorControllerGroup m_leftDrive;
   private MotorControllerGroup m_rightDrive;
@@ -43,6 +50,11 @@ public class DriveSubsystem extends SubsystemBase {
 
   private double m_desiredAngle = 0;
   private boolean m_alignModules = true;
+
+  // Network Table Instance
+  private NetworkTableInstance m_netInst;
+  private NetworkTable m_limelight;
+  private NetworkTableEntry m_limelightX;
 
   public DriveSubsystem() {
     m_frontLeftDriveMotor = new CANSparkMax(DriveConstants.kFrontLeftDriveMotorId, MotorType.kBrushless);
@@ -88,6 +100,12 @@ public class DriveSubsystem extends SubsystemBase {
     m_rearLeftTurnPIDController = m_rearLeftTurnMotor.getPIDController();
     m_rearRightTurnPIDController = m_rearRightTurnMotor.getPIDController();
 
+    m_visionPIDController = new PIDController(
+      AutoConstants.kVisionP,
+      AutoConstants.kVisionI,
+      AutoConstants.kVisionD
+    );
+
     // Configure PID controllers
     m_frontLeftTurnPIDController.setP(DriveConstants.kP);
     m_frontLeftTurnPIDController.setI(DriveConstants.kI);
@@ -113,6 +131,11 @@ public class DriveSubsystem extends SubsystemBase {
     m_frontRightTurnPIDController.setFeedbackDevice(m_frontRightTurnEncoder);
     m_rearLeftTurnPIDController.setFeedbackDevice(m_rearLeftTurnEncoder);
     m_rearRightTurnPIDController.setFeedbackDevice(m_rearRightTurnEncoder);
+
+    // Get network tables values
+    m_netInst = NetworkTableInstance.getDefault();
+    m_limelight = m_netInst.getTable("limelight");
+    m_limelightX = m_limelight.getEntry("tx");
   }
 
   @Override
@@ -130,9 +153,9 @@ public class DriveSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("Rear Right Encoder", m_rearRightTurnEncoder.getPosition());
   }
 
-  public void drive(double ySpeed, double rotSpeed, double pov) {
+  public void drive(double ySpeed, double rotSpeed, double pov, boolean rateLimited) {
     if (pov == -1 || pov == 0) { // Default or Up
-      drive(ySpeed, rotSpeed);
+      drive(ySpeed, rotSpeed, rateLimited);
     } else if (pov == 270) { // Swerve left
       swerveLeft(DriveConstants.kSwervePowerPercent);
     } else if (pov == 90) { // Swerve right
@@ -140,15 +163,20 @@ public class DriveSubsystem extends SubsystemBase {
     }
   }
 
-  public void drive(double ySpeed, double rotSpeed) {
+  public void drive(double ySpeed, double rotSpeed, boolean rateLimited) {
     m_desiredAngle = 0;
     
-    m_driveTrain.arcadeDrive(
-      // ySpeed,
-      // rotSpeed
-      m_magLimiter.calculate(ySpeed),
-      m_rotLimiter.calculate(rotSpeed)
-    );
+    if (rateLimited) {
+      m_driveTrain.arcadeDrive(
+        m_magLimiter.calculate(ySpeed),
+        m_rotLimiter.calculate(rotSpeed)
+      );
+    } else {
+      m_driveTrain.arcadeDrive(
+        ySpeed,
+        rotSpeed
+      );
+    }
   }
 
   public void swerveLeft(double speed) {
@@ -165,6 +193,12 @@ public class DriveSubsystem extends SubsystemBase {
 
   public void alignModulesEnabled(boolean enabled) {
     m_alignModules = enabled;
+  }
+
+  public void trackVisionTarget() {
+    double limelightX = m_limelightX.getDouble(0);
+
+    drive(0, m_visionPIDController.calculate(limelightX, 0), false);
   }
 
   public void resetEncoders() {

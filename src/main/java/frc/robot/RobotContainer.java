@@ -5,9 +5,6 @@
 package frc.robot;
 
 import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.networktables.NetworkTable;
-import edu.wpi.first.networktables.NetworkTableEntry;
-import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -37,17 +34,8 @@ public class RobotContainer {
   private Joystick m_driverController = new Joystick(OperatorConstants.kDriverControllerPort);
   private XboxController m_armController = new XboxController(OperatorConstants.kArmControllerPort);
 
-  // Network Table Instance
-  private NetworkTableInstance m_netInst;
-  private NetworkTable m_limelight;
-  private NetworkTableEntry m_limelightX;
-
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
-    m_netInst = NetworkTableInstance.getDefault();
-    m_limelight = m_netInst.getTable("limelight");
-    m_limelightX = m_limelight.getEntry("tx");
-
     // Configure the trigger bindings
     configureBindings();
 
@@ -60,7 +48,8 @@ public class RobotContainer {
           -MathUtil.applyDeadband(
             m_driverController.getZ() * DriveConstants.kPowerPercent,
             OperatorConstants.kDriverControllerDeadband),
-          m_driverController.getPOV()
+          m_driverController.getPOV(),
+          true
         ),
         m_driveSubsystem).withName("Joystick Drive")
     );
@@ -130,23 +119,7 @@ public class RobotContainer {
     // Use RunCommand for repeating code and InstantCommand for one-time code
     // Use Thread.sleep(milliseconds) surrounded by a try-catch statement to delay the autonomous code
     return new RunCommand(
-      () -> {
-        SmartDashboard.putNumber("Limelight X", m_limelightX.getDouble(0));
-
-        double limelightX = m_limelightX.getDouble(0);
-        
-        if (limelightX <= -10) { // Left fast-rotation zone
-          m_driveSubsystem.drive(0.4, 0.8);
-        } else if (limelightX >= 10) { // Right fast-rotation zone
-          m_driveSubsystem.drive(0.4, -0.8);
-        } else if (limelightX > -10 && limelightX < -1) { // Left slow-rotation zone
-          m_driveSubsystem.drive(0.5, 0.4);
-        } else if (limelightX < 10 && limelightX > 1) { // Right slow-rotation zone
-          m_driveSubsystem.drive(0.5, -0.4);
-        } else { // Target achieved
-          m_driveSubsystem.drive(0.5, 0);
-        }
-      },
+      () -> m_driveSubsystem.trackVisionTarget(),
       m_driveSubsystem).withName("Auto");
   }
 }
