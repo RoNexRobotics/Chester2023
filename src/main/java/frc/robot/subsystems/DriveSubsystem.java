@@ -13,7 +13,6 @@ import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.DriveConstants;
-import frc.robot.Constants.OperatorConstants;
 
 public class DriveSubsystem extends SubsystemBase {
   private CANSparkMax m_frontLeftDriveMotor;
@@ -29,15 +28,15 @@ public class DriveSubsystem extends SubsystemBase {
   private RelativeEncoder m_frontRightTurnEncoder;
   private RelativeEncoder m_rearLeftTurnEncoder;
   private RelativeEncoder m_rearRightTurnEncoder;
-
-  private DifferentialDrive m_driveTrain;
-  private MotorControllerGroup m_leftDrive;
-  private MotorControllerGroup m_rightDrive;
-
+  
   private SparkMaxPIDController m_frontLeftTurnPIDController;
   private SparkMaxPIDController m_frontRightTurnPIDController;
   private SparkMaxPIDController m_rearLeftTurnPIDController;
   private SparkMaxPIDController m_rearRightTurnPIDController;
+
+  private DifferentialDrive m_driveTrain;
+  private MotorControllerGroup m_leftDrive;
+  private MotorControllerGroup m_rightDrive;
 
   private SlewRateLimiter m_magLimiter = new SlewRateLimiter(DriveConstants.kMagnitudeSlewRate);
   private SlewRateLimiter m_rotLimiter = new SlewRateLimiter(DriveConstants.kRotationalSlewRate);
@@ -55,21 +54,25 @@ public class DriveSubsystem extends SubsystemBase {
     m_rearRightDriveMotor = new CANSparkMax(DriveConstants.kRearRightDriveMotorId, MotorType.kBrushless);
     m_rearRightTurnMotor = new CANSparkMax(DriveConstants.kRearRightTurnMotorId, MotorType.kBrushless);
 
-    m_frontLeftTurnMotor.restoreFactoryDefaults();
-    m_frontRightTurnMotor.restoreFactoryDefaults();
-    m_rearLeftTurnMotor.restoreFactoryDefaults();
-    m_rearRightTurnMotor.restoreFactoryDefaults();
-
-    m_frontLeftTurnMotor.setIdleMode(IdleMode.kBrake);
-    m_frontRightTurnMotor.setIdleMode(IdleMode.kBrake);
-    m_rearLeftTurnMotor.setIdleMode(IdleMode.kBrake);
-    m_rearRightTurnMotor.setIdleMode(IdleMode.kBrake);
-
+    // Get turn encoders
     m_frontLeftTurnEncoder = m_frontLeftTurnMotor.getEncoder();
     m_frontRightTurnEncoder = m_frontRightTurnMotor.getEncoder();
     m_rearLeftTurnEncoder = m_rearLeftTurnMotor.getEncoder();
     m_rearRightTurnEncoder = m_rearRightTurnMotor.getEncoder();
 
+    // Reset turn Spark Maxs to factory defaults
+    m_frontLeftTurnMotor.restoreFactoryDefaults();
+    m_frontRightTurnMotor.restoreFactoryDefaults();
+    m_rearLeftTurnMotor.restoreFactoryDefaults();
+    m_rearRightTurnMotor.restoreFactoryDefaults();
+
+    // Configure turn Spark Maxs' idle mode
+    m_frontLeftTurnMotor.setIdleMode(IdleMode.kBrake);
+    m_frontRightTurnMotor.setIdleMode(IdleMode.kBrake);
+    m_rearLeftTurnMotor.setIdleMode(IdleMode.kBrake);
+    m_rearRightTurnMotor.setIdleMode(IdleMode.kBrake);
+
+    // Create motor controller groups and drivetrain
     m_leftDrive = new MotorControllerGroup(m_frontLeftDriveMotor, m_rearLeftDriveMotor);
     m_rightDrive = new MotorControllerGroup(m_frontRightDriveMotor, m_rearRightDriveMotor);
     m_driveTrain = new DifferentialDrive(m_leftDrive, m_rightDrive);
@@ -77,14 +80,15 @@ public class DriveSubsystem extends SubsystemBase {
     m_leftDrive.setInverted(DriveConstants.kLeftDriveInverted);
     m_rightDrive.setInverted(DriveConstants.kRightDriveInverted);
 
-    m_driveTrain.setDeadband(OperatorConstants.kDriverControllerDeadband);
     m_driveTrain.setSafetyEnabled(false);
 
+    // Get turn PID controllers
     m_frontLeftTurnPIDController = m_frontLeftTurnMotor.getPIDController();
     m_frontRightTurnPIDController = m_frontRightTurnMotor.getPIDController();
     m_rearLeftTurnPIDController = m_rearLeftTurnMotor.getPIDController();
     m_rearRightTurnPIDController = m_rearRightTurnMotor.getPIDController();
 
+    // Configure PID controllers
     m_frontLeftTurnPIDController.setP(DriveConstants.kP);
     m_frontLeftTurnPIDController.setI(DriveConstants.kI);
     m_frontLeftTurnPIDController.setD(DriveConstants.kD);
@@ -128,14 +132,7 @@ public class DriveSubsystem extends SubsystemBase {
 
   public void drive(double ySpeed, double rotSpeed, double pov) {
     if (pov == -1 || pov == 0) { // Default or Up
-      m_desiredAngle = 0;
-
-      m_driveTrain.arcadeDrive(
-        // ySpeed,
-        // rotSpeed
-        m_magLimiter.calculate(ySpeed),
-        m_rotLimiter.calculate(rotSpeed)
-      );
+      drive(ySpeed, rotSpeed);
     } else if (pov == 270) { // Swerve left
       swerveLeft(DriveConstants.kSwervePowerPercent);
     } else if (pov == 90) { // Swerve right

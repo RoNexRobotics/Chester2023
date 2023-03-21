@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
@@ -53,8 +54,12 @@ public class RobotContainer {
     m_driveSubsystem.setDefaultCommand(
       new RunCommand(
         () -> m_driveSubsystem.drive(
-          -m_driverController.getY() * DriveConstants.kPowerPercent,
-          -m_driverController.getZ() * DriveConstants.kAngularPowerPercent,
+          -MathUtil.applyDeadband(
+            m_driverController.getY() * DriveConstants.kPowerPercent,
+            OperatorConstants.kDriverControllerDeadband),
+          -MathUtil.applyDeadband(
+            m_driverController.getZ() * DriveConstants.kPowerPercent,
+            OperatorConstants.kDriverControllerDeadband),
           m_driverController.getPOV()
         ),
         m_driveSubsystem).withName("Joystick Drive")
@@ -131,9 +136,9 @@ public class RobotContainer {
         double limelightX = m_limelightX.getDouble(0);
         
         if (limelightX <= -10) { // Left fast-rotation zone
-          m_driveSubsystem.drive(0.4, 0.7);
+          m_driveSubsystem.drive(0.4, 0.8);
         } else if (limelightX >= 10) { // Right fast-rotation zone
-          m_driveSubsystem.drive(0.4, -0.7);
+          m_driveSubsystem.drive(0.4, -0.8);
         } else if (limelightX > -10 && limelightX < -1) { // Left slow-rotation zone
           m_driveSubsystem.drive(0.5, 0.4);
         } else if (limelightX < 10 && limelightX > 1) { // Right slow-rotation zone
