@@ -10,24 +10,30 @@ import frc.robot.Constants.ArmConstants;
 
 public class ArmSubsystem extends SubsystemBase {
   VictorSPX m_raiseMotor;
-  VictorSPX m_extentionMotor;
+  VictorSPX m_extensionMotor;
   Encoder m_raiseEncoder;
-  Encoder m_extentionEncoder;
+  Encoder m_extensionEncoder;
 
   public ArmSubsystem() {
-    m_raiseMotor = new VictorSPX(ArmConstants.kArmRaiseMotorId);
-    m_extentionMotor = new VictorSPX(ArmConstants.kArmExtensionMotorId);
-    m_raiseEncoder = new Encoder(2, 3);
-    m_extentionEncoder = new Encoder(0, 1);
+    m_raiseMotor = new VictorSPX(ArmConstants.kRaiseMotorId);
+    m_extensionMotor = new VictorSPX(ArmConstants.kExtensionMotorId);
+    m_raiseEncoder = new Encoder(
+      ArmConstants.kRaiseEncoderChannelA,
+      ArmConstants.kRaiseEncoderChannelB,
+      ArmConstants.kRaiseEncoderInverted,
+      ArmConstants.kRaiseEncoderEncodingType);
+    m_extensionEncoder = new Encoder(
+      ArmConstants.kExtensionEncoderChannelA,
+      ArmConstants.kExtensionEncoderChannelB,
+      ArmConstants.kExtensionEncoderInverted,
+      ArmConstants.kExtensionEncoderEncodingType);
   }
 
   public void operateArm(double pov) {
     if (pov == 0) {
-      m_raiseMotor.set(ControlMode.PercentOutput, 1);
-      System.out.println("Raising");
+      m_raiseMotor.set(ControlMode.PercentOutput, ArmConstants.kRaiseMotorPowerPercent);
     } else if (pov == 180) {
-      m_raiseMotor.set(ControlMode.PercentOutput, -1);
-      System.out.println("Lowering");
+      m_raiseMotor.set(ControlMode.PercentOutput, -ArmConstants.kRaiseMotorPowerPercent);
     } else {
       m_raiseMotor.set(ControlMode.PercentOutput, 0);
     }
@@ -36,21 +42,18 @@ public class ArmSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
     SmartDashboard.putNumber("Raise Encoder Value", m_raiseEncoder.getDistance());
-    SmartDashboard.putNumber("Extention Encoder Value", m_extentionEncoder.getDistance());
+    SmartDashboard.putNumber("Extention Encoder Value", m_extensionEncoder.getDistance());
   }
 
   public void extendArm() {
-    m_extentionMotor.set(ControlMode.PercentOutput, 0.3);
-    System.out.println("Extending");
+    m_extensionMotor.set(ControlMode.PercentOutput, ArmConstants.kExtensionPowerPercent);
   }
 
   public void retractArm() {
-    m_extentionMotor.set(ControlMode.PercentOutput, -0.3);
-    System.out.println("Retracting");
+    m_extensionMotor.set(ControlMode.PercentOutput, -ArmConstants.kExtensionPowerPercent);
   }
 
-  public void stopExtentionMotor() {
-    m_extentionMotor.set(ControlMode.PercentOutput, 0);
-    System.out.println("Stopped!");
+  public void stopExtensionMotor() {
+    m_extensionMotor.set(ControlMode.PercentOutput, 0);
   }
 }

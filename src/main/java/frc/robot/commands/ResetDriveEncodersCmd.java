@@ -5,17 +5,18 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.subsystems.ArmSubsystem;
+import frc.robot.subsystems.DriveSubsystem;
 
-public class RetractArmCmd extends CommandBase {
+public class ResetDriveEncodersCmd extends CommandBase {
   // Subsystems
-  private ArmSubsystem m_armSubsystem;
-  /** Creates a new ExtendArm. */
-  public RetractArmCmd(ArmSubsystem armSubsystem) {
-    // Use addRequirements() here to declare subsystem dependencies.
-    m_armSubsystem = armSubsystem;
+  private DriveSubsystem m_driveSubsystem;
 
-    addRequirements(m_armSubsystem);
+  /** Creates a new ResetDriveEncodersCmd. */
+  public ResetDriveEncodersCmd(DriveSubsystem driveSubsystem) {
+    // Use addRequirements() here to declare subsystem dependencies.
+    m_driveSubsystem = driveSubsystem;
+
+    addRequirements(m_driveSubsystem);
   }
 
   // Called when the command is initially scheduled.
@@ -25,13 +26,14 @@ public class RetractArmCmd extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    m_armSubsystem.retractArm();
+    m_driveSubsystem.alignModulesEnabled(false);
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    m_armSubsystem.stopExtensionMotor();
+    m_driveSubsystem.resetEncoders();
+    m_driveSubsystem.alignModulesEnabled(true);
   }
 
   // Returns true when the command should end.

@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import edu.wpi.first.wpilibj.CounterBase.EncodingType;
+
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
  * constants. This class should not be used for any other purpose. All constants should be declared
@@ -35,9 +37,9 @@ public final class Constants {
 
     // PID values
     // TODO: Tune PID values (Specifically the P and D terms)
-    public static final double kP = 0.3; // Larger value reacts very quickly to large error, while smaller value is less reactive
+    public static final double kP = 0.5; // Larger value reacts very quickly to large error, while smaller value is less reactive
     public static final double kI = 0; // Larger value will nudge onto target more proactively
-    public static final double kD = 0; // Larger value dampens more and will try to slow down more aggressively
+    public static final double kD = 0.2; // Larger value dampens more and will try to slow down more aggressively
     public static final double kFF = 0;
 
     // Slew rate values
@@ -50,8 +52,22 @@ public final class Constants {
   }
 
   public static final class ArmConstants {
-    public static final int kArmRaiseMotorId = 23;
-    public static final int kArmExtensionMotorId = 22;
+    public static final int kRaiseMotorId = 23;
+    public static final int kExtensionMotorId = 22;
+    
+    public static final int kRaiseEncoderChannelA = 2;
+    public static final int kRaiseEncoderChannelB = 3;
+    public static final int kExtensionEncoderChannelA = 0;
+    public static final int kExtensionEncoderChannelB = 1;
+
+    public static final boolean kRaiseEncoderInverted = false;
+    public static final boolean kExtensionEncoderInverted = false;
+
+    public static final EncodingType kRaiseEncoderEncodingType = EncodingType.k1X;
+    public static final EncodingType kExtensionEncoderEncodingType = EncodingType.k1X;
+
+    public static final double kRaiseMotorPowerPercent = 0.3;
+    public static final double kExtensionPowerPercent = 0.3;
   }
 
   public static final class OperatorConstants {

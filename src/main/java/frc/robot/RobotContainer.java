@@ -17,7 +17,9 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.ExtendArmCmd;
+import frc.robot.commands.ResetDriveEncodersCmd;
 import frc.robot.commands.RetractArmCmd;
+import frc.robot.commands.RunVacuumCmd;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.VacuumSubsystem;
@@ -31,12 +33,14 @@ import frc.robot.subsystems.VacuumSubsystem;
 public class RobotContainer {
   // Robot subsystems
   private DriveSubsystem m_driveSubsystem = new DriveSubsystem();
-  private VacuumSubsystem m_vacuumSubsystem = new VacuumSubsystem();
   private ArmSubsystem m_armSubsystem = new ArmSubsystem();
+  private VacuumSubsystem m_vacuumSubsystem = new VacuumSubsystem();
 
   // Commands
+  private ResetDriveEncodersCmd m_resetDriveEncodersCmd = new ResetDriveEncodersCmd(m_driveSubsystem);
   private ExtendArmCmd m_extendArmCmd = new ExtendArmCmd(m_armSubsystem);
   private RetractArmCmd m_retractArmCmd = new RetractArmCmd(m_armSubsystem);
+  private RunVacuumCmd m_runVacuumCmd = new RunVacuumCmd(m_vacuumSubsystem);
 
   // Controllers
   private Joystick m_driverController = new Joystick(OperatorConstants.kDriverControllerPort);
@@ -62,19 +66,20 @@ public class RobotContainer {
         m_driveSubsystem).withName("Joystick Drive")
     );
 
+    m_armSubsystem.setDefaultCommand(
+      new RunCommand(
+        () -> m_armSubsystem.operateArm(m_armController.getPOV()),
+        m_armSubsystem).withName("OperateArm")
+    );
+
     m_vacuumSubsystem.setDefaultCommand(
       new InstantCommand(
         () -> m_vacuumSubsystem.off(),
         m_vacuumSubsystem).withName("Off")
     );
 
-    m_armSubsystem.setDefaultCommand(
-      new RunCommand(
-        () -> m_armSubsystem.operateArm(m_armController.getPOV()),
-        m_armSubsystem)
-    );
-
     SmartDashboard.putData(m_driveSubsystem);
+    SmartDashboard.putData(m_armSubsystem);
     SmartDashboard.putData(m_vacuumSubsystem);
   }
 
@@ -88,16 +93,8 @@ public class RobotContainer {
    * joysticks}.
    */
   private void configureBindings() {
-    // Vacuum forward
-    new JoystickButton(m_armController, XboxController.Button.kRightBumper.value).onTrue(
-      new RunCommand(
-        () -> m_vacuumSubsystem.on(),
-        m_vacuumSubsystem).withName("On")
-    ).onFalse(
-      new RunCommand(
-        () -> m_vacuumSubsystem.off(),
-        m_vacuumSubsystem).withName("Off")
-    );
+    // Reset drive encoders
+    new JoystickButton(m_driverController, 6).whileTrue(m_resetDriveEncodersCmd);
 
     // Extend arm
     new JoystickButton(m_armController, XboxController.Button.kY.value).whileTrue(m_extendArmCmd);
@@ -105,18 +102,8 @@ public class RobotContainer {
     // Retract arm
     new JoystickButton(m_armController, XboxController.Button.kA.value).whileTrue(m_retractArmCmd);
 
-    // Reset drive encoders
-    new JoystickButton(m_driverController, 6).whileTrue(
-      new InstantCommand(
-        () -> m_driveSubsystem.alignModulesEnabled(false)
-      )
-    ).onFalse(
-      new InstantCommand(
-        () -> m_driveSubsystem.alignModulesEnabled(true)
-      ).andThen(
-        () -> m_driveSubsystem.resetEncoders()
-      )
-    );
+    // Vacuum forward
+    new JoystickButton(m_armController, XboxController.Button.kRightBumper.value).whileTrue(m_runVacuumCmd);
   }
 
   /**
