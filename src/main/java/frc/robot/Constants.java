@@ -41,8 +41,8 @@ public final class Constants {
     public static final double kFF = 0;
 
     // Slew rate values
-    public static final double kMagnitudeSlewRate = 0.5;
-    public static final double kRotationalSlewRate = 0.5;
+    public static final double kMagnitudeSlewRate = 0.3;
+    public static final double kRotationalSlewRate = 0.3;
   }
 
   public static final class VacuumConstants {
@@ -50,7 +50,7 @@ public final class Constants {
   }
 
   public static final class ArmConstants {
-    public static final int kArmRaiseMotorId = 21;
+    public static final int kArmRaiseMotorId = 23;
     public static final int kArmExtensionMotorId = 22;
   }
 

@@ -23,10 +23,10 @@ public class ArmSubsystem extends SubsystemBase {
 
   public void operateArm(double pov) {
     if (pov == 0) {
-      m_raiseMotor.set(ControlMode.PercentOutput, 0.3);
+      m_raiseMotor.set(ControlMode.PercentOutput, 1);
       System.out.println("Raising");
     } else if (pov == 180) {
-      m_raiseMotor.set(ControlMode.PercentOutput, -0.3);
+      m_raiseMotor.set(ControlMode.PercentOutput, -1);
       System.out.println("Lowering");
     } else {
       m_raiseMotor.set(ControlMode.PercentOutput, 0);
