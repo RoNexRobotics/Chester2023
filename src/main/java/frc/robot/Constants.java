@@ -49,6 +49,11 @@ public final class Constants {
     public static final int kVacuumMotorId = 20;
   }
 
+  public static final class ArmConstants {
+    public static final int kArmRaiseMotorId = 21;
+    public static final int kArmExtensionMotorId = 22;
+  }
+
   public static final class OperatorConstants {
     public static final int kDriverControllerPort = 0;
     public static final double kDriverControllerDeadband = 0.2;
