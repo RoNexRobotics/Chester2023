@@ -11,12 +11,16 @@ import frc.robot.Constants.ArmConstants;
 public class ArmSubsystem extends SubsystemBase {
   VictorSPX m_raiseMotor;
   VictorSPX m_extensionMotor;
+  VictorSPX m_pivotMotor;
   Encoder m_raiseEncoder;
   Encoder m_extensionEncoder;
+  Encoder m_pivotEncoder;
 
   public ArmSubsystem() {
     m_raiseMotor = new VictorSPX(ArmConstants.kRaiseMotorId);
     m_extensionMotor = new VictorSPX(ArmConstants.kExtensionMotorId);
+    m_pivotMotor = new VictorSPX(ArmConstants.kPivotMotorId);
+
     m_raiseEncoder = new Encoder(
       ArmConstants.kRaiseEncoderChannelA,
       ArmConstants.kRaiseEncoderChannelB,
@@ -27,30 +31,39 @@ public class ArmSubsystem extends SubsystemBase {
       ArmConstants.kExtensionEncoderChannelB,
       ArmConstants.kExtensionEncoderInverted,
       ArmConstants.kExtensionEncoderEncodingType);
-  }
-
-  public void operateArm(double pov) {
-    if (pov == 0) {
-      m_raiseMotor.set(ControlMode.PercentOutput, ArmConstants.kRaiseMotorPowerPercent);
-    } else if (pov == 180) {
-      m_raiseMotor.set(ControlMode.PercentOutput, -ArmConstants.kRaiseMotorPowerPercent);
-    } else {
-      m_raiseMotor.set(ControlMode.PercentOutput, 0);
-    }
+    m_pivotEncoder = new Encoder(
+      ArmConstants.kPivotEncoderChannelA,
+      ArmConstants.kPivotEncoderChannelB,
+      ArmConstants.kPivotEncoderInverted,
+      ArmConstants.kPivotEncoderEncodingType
+    );
   }
 
   @Override
   public void periodic() {
     SmartDashboard.putNumber("Raise Encoder Value", m_raiseEncoder.getDistance());
     SmartDashboard.putNumber("Extention Encoder Value", m_extensionEncoder.getDistance());
+    SmartDashboard.putNumber("Pivot Encoder Value", m_pivotEncoder.getDistance());
+  }
+
+  public void operateArm(double raiseValue, double pov) {
+    m_raiseMotor.set(ControlMode.PercentOutput, raiseValue * ArmConstants.kRaiseMotorPowerPercent);
+
+    if (pov == 0) { // Up
+      m_pivotMotor.set(ControlMode.PercentOutput, ArmConstants.kPivotMotorPowerPercent);
+    } else if (pov == 180) { // Down
+      m_pivotMotor.set(ControlMode.PercentOutput, -ArmConstants.kPivotMotorPowerPercent);
+    } else {
+      m_pivotMotor.set(ControlMode.PercentOutput, 0);
+    }
   }
 
   public void extendArm() {
-    m_extensionMotor.set(ControlMode.PercentOutput, ArmConstants.kExtensionPowerPercent);
+    m_extensionMotor.set(ControlMode.PercentOutput, ArmConstants.kExtensionMotorPowerPercent);
   }
 
   public void retractArm() {
-    m_extensionMotor.set(ControlMode.PercentOutput, -ArmConstants.kExtensionPowerPercent);
+    m_extensionMotor.set(ControlMode.PercentOutput, -ArmConstants.kExtensionMotorPowerPercent);
   }
 
   public void stopExtensionMotor() {

@@ -68,7 +68,9 @@ public class RobotContainer {
 
     m_armSubsystem.setDefaultCommand(
       new RunCommand(
-        () -> m_armSubsystem.operateArm(m_armController.getPOV()),
+        () -> m_armSubsystem.operateArm(
+          MathUtil.applyDeadband(m_armController.getLeftY(), OperatorConstants.kArmControllerDeadband),
+          m_armController.getPOV()),
         m_armSubsystem).withName("OperateArm")
     );
 
