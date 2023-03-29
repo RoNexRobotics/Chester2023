@@ -7,14 +7,15 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.VacuumSubsystem;
 
-public class RunVacuumCmd extends CommandBase {
+public class OpenUpperSolenoidCmd extends CommandBase {
+  // Subsystems
   private VacuumSubsystem m_vacuumSubsystem;
 
-  /** Creates a new EnableVacuum. */
-  public RunVacuumCmd(VacuumSubsystem vacuumSubsystem) {
-    // Use addRequirements() here to declare subsystem dependencies.
+  /** Creates a new ToggleUpperSolenoid. */
+  public OpenUpperSolenoidCmd(VacuumSubsystem vacuumSubsystem) {
     m_vacuumSubsystem = vacuumSubsystem;
 
+    // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(m_vacuumSubsystem);
   }
 
@@ -25,13 +26,13 @@ public class RunVacuumCmd extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    m_vacuumSubsystem.vacuumOn();
+    m_vacuumSubsystem.openUpperSolenoid();
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    m_vacuumSubsystem.vacuumOff();
+    m_vacuumSubsystem.closeUpperSolenoid();
   }
 
   // Returns true when the command should end.

@@ -27,28 +27,41 @@ public final class Constants {
     public static final int kFrontRightTurnMotorId = 6;
     public static final int kRearRightTurnMotorId = 8;
 
+    public static final boolean kFrontLeftTurnEncoderInverted = false;
+    public static final boolean kFrontRightTurnEncoderInverted = false;
+    public static final boolean kRearLeftTurnEncoderInverted = false;
+    public static final boolean kRearRightTurnEncoderInverted = false;
+
     public static final boolean kLeftDriveInverted = true;
     public static final boolean kRightDriveInverted = false;
+
+    public static final double kFrontLeftAngularOffset = 0;
+    public static final double kFrontRightAngularOffset = 0;
+    public static final double kRearLeftAngularOffset = Math.PI;
+    public static final double kRearRightAngularOffset = Math.PI / 2;
 
     // Speeds
     public static final double kPowerPercent = 1;
     public static final double kAngularPowerPercent = 1;
-    public static final double kSwervePowerPercent = 0.6;
+    public static final double kSwervePowerPercent = 1;
 
     // PID values
     // TODO: Tune PID values (Specifically the P and D terms)
-    public static final double kP = 0.5; // Larger value reacts very quickly to large error, while smaller value is less reactive
+    public static final double kP = 0.7; // Larger value reacts very quickly to large error, while smaller value is less reactive
     public static final double kI = 0; // Larger value will nudge onto target more proactively
     public static final double kD = 0.2; // Larger value dampens more and will try to slow down more aggressively
     public static final double kFF = 0;
 
     // Slew rate values
-    public static final double kMagnitudeSlewRate = 0.3;
-    public static final double kRotationalSlewRate = 0.3;
+    public static final double kMagnitudeSlewRate = 0.8;
+    public static final double kRotationalSlewRate = 0.8;
   }
 
   public static final class VacuumConstants {
     public static final int kVacuumMotorId = 20;
+
+    public static final int kUpperSolenoidId = 1;
+    public static final int kLowerSolenoidId = 0;
   }
 
   public static final class ArmConstants {
@@ -65,6 +78,11 @@ public final class Constants {
     public static final int kPivotEncoderChannelA = 4;
     public static final int kPivotEncoderChannelB = 5;
 
+    public static final int kExtentionLimitSwitchId = 9;
+    public static final int kRaiseLimitSwitchId = 8;
+    public static final int kPivotLowerLimitSwitchId = 7;
+    public static final int kPivotUpperLimitSwitchId = 6;
+
     public static final boolean kRaiseEncoderInverted = false;
     public static final boolean kExtensionEncoderInverted = false;
     public static final boolean kPivotEncoderInverted = false;
@@ -75,8 +93,8 @@ public final class Constants {
     public static final EncodingType kPivotEncoderEncodingType = EncodingType.k1X;
 
     public static final double kRaiseMotorPowerPercent = 1;
-    public static final double kExtensionMotorPowerPercent = 0.7;
-    public static final double kPivotMotorPowerPercent = 0.5;
+    public static final double kExtensionMotorPowerPercent = 1;
+    public static final double kPivotMotorPowerPercent = 0.3;
   }
 
   public static final class OperatorConstants {

@@ -72,6 +72,11 @@ public class DriveSubsystem extends SubsystemBase {
     m_rearLeftTurnEncoder = m_rearLeftTurnMotor.getEncoder();
     m_rearRightTurnEncoder = m_rearRightTurnMotor.getEncoder();
 
+    m_frontLeftTurnMotor.setInverted(DriveConstants.kFrontLeftTurnEncoderInverted);
+    m_frontRightTurnMotor.setInverted(DriveConstants.kFrontRightTurnEncoderInverted);
+    m_rearLeftTurnMotor.setInverted(DriveConstants.kRearLeftTurnEncoderInverted);
+    m_rearRightTurnMotor.setInverted(DriveConstants.kRearRightTurnEncoderInverted);
+
     // Reset turn Spark Maxs to factory defaults
     m_frontLeftTurnMotor.restoreFactoryDefaults();
     m_frontRightTurnMotor.restoreFactoryDefaults();
@@ -153,13 +158,13 @@ public class DriveSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("Rear Right Encoder", m_rearRightTurnEncoder.getPosition());
   }
 
-  public void drive(double ySpeed, double rotSpeed, double pov, boolean rateLimited) {
+  public void drive(double ySpeed, double rotSpeed, double swerveSpeed, double pov, boolean rateLimited) {
     if (pov == -1 || pov == 0) { // Default or Up
       drive(ySpeed, rotSpeed, rateLimited);
     } else if (pov == 270) { // Swerve left
-      swerveLeft(DriveConstants.kSwervePowerPercent);
+      swerveLeft(swerveSpeed * DriveConstants.kSwervePowerPercent);
     } else if (pov == 90) { // Swerve right
-      swerveRight(DriveConstants.kSwervePowerPercent);
+      swerveRight(swerveSpeed * DriveConstants.kSwervePowerPercent);
     }
   }
 
@@ -180,13 +185,13 @@ public class DriveSubsystem extends SubsystemBase {
   }
 
   public void swerveLeft(double speed) {
-    m_desiredAngle = -3;
+    m_desiredAngle = 3;
     
     m_driveTrain.arcadeDrive(speed, 0);
   }
 
   public void swerveRight(double speed) {
-    m_desiredAngle = 3;
+    m_desiredAngle = -3;
     
     m_driveTrain.arcadeDrive(speed, 0);
   }

@@ -20,6 +20,8 @@ import frc.robot.commands.ExtendArmCmd;
 import frc.robot.commands.ResetDriveEncodersCmd;
 import frc.robot.commands.RetractArmCmd;
 import frc.robot.commands.RunVacuumCmd;
+import frc.robot.commands.OpenLowerSolenoidCmd;
+import frc.robot.commands.OpenUpperSolenoidCmd;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.VacuumSubsystem;
@@ -41,6 +43,8 @@ public class RobotContainer {
   private ExtendArmCmd m_extendArmCmd = new ExtendArmCmd(m_armSubsystem);
   private RetractArmCmd m_retractArmCmd = new RetractArmCmd(m_armSubsystem);
   private RunVacuumCmd m_runVacuumCmd = new RunVacuumCmd(m_vacuumSubsystem);
+  private OpenUpperSolenoidCmd m_openUpperSolenoidCmd = new OpenUpperSolenoidCmd(m_vacuumSubsystem);
+  private OpenLowerSolenoidCmd m_openLowerSolenoidCmd = new OpenLowerSolenoidCmd(m_vacuumSubsystem);
 
   // Controllers
   private Joystick m_driverController = new Joystick(OperatorConstants.kDriverControllerPort);
@@ -54,12 +58,13 @@ public class RobotContainer {
     m_driveSubsystem.setDefaultCommand(
       new RunCommand(
         () -> m_driveSubsystem.drive(
-          -MathUtil.applyDeadband(
+          MathUtil.applyDeadband(
             m_driverController.getY() * DriveConstants.kPowerPercent,
             OperatorConstants.kDriverControllerDeadband),
-          -MathUtil.applyDeadband(
+          MathUtil.applyDeadband(
             m_driverController.getZ() * DriveConstants.kPowerPercent,
             OperatorConstants.kDriverControllerDeadband),
+          m_driverController.getThrottle(),
           m_driverController.getPOV(),
           true
         ),
@@ -69,14 +74,14 @@ public class RobotContainer {
     m_armSubsystem.setDefaultCommand(
       new RunCommand(
         () -> m_armSubsystem.operateArm(
-          MathUtil.applyDeadband(m_armController.getLeftY(), OperatorConstants.kArmControllerDeadband),
+          MathUtil.applyDeadband(m_armController.getRightY(), OperatorConstants.kArmControllerDeadband),
           m_armController.getPOV()),
         m_armSubsystem).withName("OperateArm")
     );
 
     m_vacuumSubsystem.setDefaultCommand(
       new InstantCommand(
-        () -> m_vacuumSubsystem.off(),
+        () -> m_vacuumSubsystem.vacuumOff(),
         m_vacuumSubsystem).withName("Off")
     );
 
@@ -104,8 +109,14 @@ public class RobotContainer {
     // Retract arm
     new JoystickButton(m_armController, XboxController.Button.kA.value).whileTrue(m_retractArmCmd);
 
-    // Vacuum forward
+    // Run vacuum
     new JoystickButton(m_armController, XboxController.Button.kRightBumper.value).whileTrue(m_runVacuumCmd);
+
+    // Open upper solenoid
+    new JoystickButton(m_armController, XboxController.Button.kX.value).whileTrue(m_openUpperSolenoidCmd);
+
+    // Open lower solenoid
+    new JoystickButton(m_armController, XboxController.Button.kB.value).whileTrue(m_openLowerSolenoidCmd);
   }
 
   /**
@@ -116,8 +127,10 @@ public class RobotContainer {
   public Command getAutonomousCommand() {
     // Use RunCommand for repeating code and InstantCommand for one-time code
     // Use Thread.sleep(milliseconds) surrounded by a try-catch statement to delay the autonomous code
-    return new RunCommand(
-      () -> m_driveSubsystem.trackVisionTarget(),
-      m_driveSubsystem).withName("Auto");
+    // return new RunCommand(
+      // () -> m_driveSubsystem.trackVisionTarget(),
+      // m_driveSubsystem).withName("Auto");
+    
+    return null;
   }
 }
