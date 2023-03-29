@@ -16,9 +16,7 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.OperatorConstants;
-import frc.robot.commands.ExtendArmCmd;
 import frc.robot.commands.ResetDriveEncodersCmd;
-import frc.robot.commands.RetractArmCmd;
 import frc.robot.commands.RunVacuumCmd;
 import frc.robot.commands.OpenLowerSolenoidCmd;
 import frc.robot.commands.OpenUpperSolenoidCmd;
@@ -40,8 +38,6 @@ public class RobotContainer {
 
   // Commands
   private ResetDriveEncodersCmd m_resetDriveEncodersCmd = new ResetDriveEncodersCmd(m_driveSubsystem);
-  private ExtendArmCmd m_extendArmCmd = new ExtendArmCmd(m_armSubsystem);
-  private RetractArmCmd m_retractArmCmd = new RetractArmCmd(m_armSubsystem);
   private RunVacuumCmd m_runVacuumCmd = new RunVacuumCmd(m_vacuumSubsystem);
   private OpenUpperSolenoidCmd m_openUpperSolenoidCmd = new OpenUpperSolenoidCmd(m_vacuumSubsystem);
   private OpenLowerSolenoidCmd m_openLowerSolenoidCmd = new OpenLowerSolenoidCmd(m_vacuumSubsystem);
@@ -75,6 +71,8 @@ public class RobotContainer {
       new RunCommand(
         () -> m_armSubsystem.operateArm(
           MathUtil.applyDeadband(m_armController.getRightY(), OperatorConstants.kArmControllerDeadband),
+          m_armController.getLeftBumper(),
+          MathUtil.applyDeadband(m_armController.getLeftTriggerAxis(), OperatorConstants.kArmControllerDeadband),
           m_armController.getPOV()),
         m_armSubsystem).withName("OperateArm")
     );
@@ -103,20 +101,14 @@ public class RobotContainer {
     // Reset drive encoders
     new JoystickButton(m_driverController, 6).whileTrue(m_resetDriveEncodersCmd);
 
-    // Extend arm
-    new JoystickButton(m_armController, XboxController.Button.kY.value).whileTrue(m_extendArmCmd);
-
-    // Retract arm
-    new JoystickButton(m_armController, XboxController.Button.kA.value).whileTrue(m_retractArmCmd);
-
     // Run vacuum
     new JoystickButton(m_armController, XboxController.Button.kRightBumper.value).whileTrue(m_runVacuumCmd);
 
     // Open upper solenoid
-    new JoystickButton(m_armController, XboxController.Button.kX.value).whileTrue(m_openUpperSolenoidCmd);
+    new JoystickButton(m_armController, XboxController.Button.kY.value).whileTrue(m_openUpperSolenoidCmd);
 
     // Open lower solenoid
-    new JoystickButton(m_armController, XboxController.Button.kB.value).whileTrue(m_openLowerSolenoidCmd);
+    new JoystickButton(m_armController, XboxController.Button.kA.value).whileTrue(m_openLowerSolenoidCmd);
   }
 
   /**

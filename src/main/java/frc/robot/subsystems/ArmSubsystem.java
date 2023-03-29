@@ -16,11 +16,11 @@ public class ArmSubsystem extends SubsystemBase {
   private Encoder m_raiseEncoder;
   private Encoder m_extensionEncoder;
   private Encoder m_pivotEncoder;
-  private DigitalInput m_extentionLimitSwitch;
+  private DigitalInput m_extensionLimitSwitch;
   private DigitalInput m_raiseLimitSwitch;
   private DigitalInput m_pivotUpperLimitSwitch;
   private DigitalInput m_pivotLowerLimitSwitch;
-  private double m_desiredExtentionPower = 0;
+  private double m_desiredExtensionPower = 0;
 
   public ArmSubsystem() {
     m_raiseMotor = new VictorSPX(ArmConstants.kRaiseMotorId);
@@ -44,7 +44,7 @@ public class ArmSubsystem extends SubsystemBase {
       ArmConstants.kPivotEncoderEncodingType
     );
 
-    m_extentionLimitSwitch = new DigitalInput(ArmConstants.kExtentionLimitSwitchId);
+    m_extensionLimitSwitch = new DigitalInput(ArmConstants.kExtensionLimitSwitchId);
     m_raiseLimitSwitch = new DigitalInput(ArmConstants.kRaiseLimitSwitchId);
     m_pivotUpperLimitSwitch = new DigitalInput(ArmConstants.kPivotUpperLimitSwitchId);
     m_pivotLowerLimitSwitch = new DigitalInput(ArmConstants.kPivotLowerLimitSwitchId);
@@ -52,26 +52,35 @@ public class ArmSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
-    if (m_desiredExtentionPower < 0 && m_extentionLimitSwitch.get()) {
+    if (m_desiredExtensionPower < 0 && m_extensionLimitSwitch.get()) {
       m_extensionMotor.set(ControlMode.PercentOutput, 0);
     } else {
-      m_extensionMotor.set(ControlMode.PercentOutput, m_desiredExtentionPower);
+      m_extensionMotor.set(ControlMode.PercentOutput, m_desiredExtensionPower);
     }
 
     SmartDashboard.putNumber("Raise Encoder Value", m_raiseEncoder.getDistance());
-    SmartDashboard.putNumber("Extention Encoder Value", m_extensionEncoder.getDistance());
+    SmartDashboard.putNumber("Extension Encoder Value", m_extensionEncoder.getDistance());
     SmartDashboard.putNumber("Pivot Encoder Value", m_pivotEncoder.getDistance());
   }
 
-  public void operateArm(double raiseValue, double pov, boolean extentionValue, double retractionValue) {
+  public void operateArm(double raiseValue, boolean extensionValue, double retractionValue, double pov) {
     double desiredRaiseMotorPower = raiseValue * ArmConstants.kRaiseMotorPowerPercent;
 
+    // Raise motor
     if (desiredRaiseMotorPower > 0 && m_raiseLimitSwitch.get()) {
       m_raiseMotor.set(ControlMode.PercentOutput, 0);
     } else {
       m_raiseMotor.set(ControlMode.PercentOutput, desiredRaiseMotorPower);
     }
 
+    // Extension motor
+    if (extensionValue) {
+      extendArm();
+    } else {
+      retractArm();
+    }
+
+    // Pivot motor
     if (pov == 0) { // Up
       if (m_pivotUpperLimitSwitch.get()) {
         m_pivotMotor.set(ControlMode.PercentOutput, 0);
@@ -90,14 +99,14 @@ public class ArmSubsystem extends SubsystemBase {
   }
 
   public void extendArm() {
-    m_desiredExtentionPower = ArmConstants.kExtensionMotorPowerPercent;
+    m_desiredExtensionPower = ArmConstants.kExtensionMotorPowerPercent;
   }
 
   public void retractArm() {
-    m_desiredExtentionPower = -ArmConstants.kExtensionMotorPowerPercent;
+    m_desiredExtensionPower = -ArmConstants.kExtensionMotorPowerPercent;
   }
 
   public void stopExtensionMotor() {
-    m_desiredExtentionPower = 0;
+    m_desiredExtensionPower = 0;
   }
 }

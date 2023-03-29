@@ -78,7 +78,7 @@ public final class Constants {
     public static final int kPivotEncoderChannelA = 4;
     public static final int kPivotEncoderChannelB = 5;
 
-    public static final int kExtentionLimitSwitchId = 9;
+    public static final int kExtensionLimitSwitchId = 9;
     public static final int kRaiseLimitSwitchId = 8;
     public static final int kPivotLowerLimitSwitchId = 7;
     public static final int kPivotUpperLimitSwitchId = 6;
