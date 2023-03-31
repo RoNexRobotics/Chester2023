@@ -68,8 +68,6 @@ public class ArmSubsystem extends SubsystemBase {
   public void operateArm(double raiseValue, boolean extensionValue, double retractionValue, double pov) {
     double desiredRaiseMotorPower = raiseValue * ArmConstants.kRaiseMotorPowerPercent;
 
-    System.out.println(raiseValue);
-
     // Raise motor
     if (desiredRaiseMotorPower < 0 && m_raiseEncoder.getDistance() > ArmConstants.kRaiseEncoderMaxValue) {
       m_raiseMotor.set(ControlMode.PercentOutput, desiredRaiseMotorPower);

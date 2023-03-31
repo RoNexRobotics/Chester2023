@@ -7,7 +7,6 @@ package frc.robot;
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.Joystick;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -40,29 +39,24 @@ import frc.robot.subsystems.VacuumSubsystem;
  */
 public class RobotContainer {
   // Robot subsystems
-  private DriveSubsystem m_driveSubsystem = new DriveSubsystem();
-  private ArmSubsystem m_armSubsystem = new ArmSubsystem();
-  private VacuumSubsystem m_vacuumSubsystem = new VacuumSubsystem();
+  private final DriveSubsystem m_driveSubsystem = new DriveSubsystem();
+  private final ArmSubsystem m_armSubsystem = new ArmSubsystem();
+  private final VacuumSubsystem m_vacuumSubsystem = new VacuumSubsystem();
 
   // Commands
-  private ResetDriveEncodersCmd m_resetDriveEncodersCmd = new ResetDriveEncodersCmd(m_driveSubsystem);
-  private CalibrateArmCmd m_calibrateArmCmd = new CalibrateArmCmd(m_armSubsystem);
-  private RunVacuumCmd m_runVacuumCmd = new RunVacuumCmd(m_vacuumSubsystem);
-  private OpenUpperSolenoidCmd m_openUpperSolenoidCmd = new OpenUpperSolenoidCmd(m_vacuumSubsystem);
-  private OpenLowerSolenoidCmd m_openLowerSolenoidCmd = new OpenLowerSolenoidCmd(m_vacuumSubsystem);
-  private AutoOneCmd m_autoOneCmd = new AutoOneCmd(m_armSubsystem);
+  private final ResetDriveEncodersCmd m_resetDriveEncodersCmd = new ResetDriveEncodersCmd(m_driveSubsystem);
+  private final CalibrateArmCmd m_calibrateArmCmd = new CalibrateArmCmd(m_armSubsystem);
+  private final RunVacuumCmd m_runVacuumCmd = new RunVacuumCmd(m_vacuumSubsystem);
+  private final OpenUpperSolenoidCmd m_openUpperSolenoidCmd = new OpenUpperSolenoidCmd(m_vacuumSubsystem);
+  private final OpenLowerSolenoidCmd m_openLowerSolenoidCmd = new OpenLowerSolenoidCmd(m_vacuumSubsystem);
+  private final AutoOneCmd m_autoOneCmd = new AutoOneCmd(m_armSubsystem);
 
   // Controllers
-  private Joystick m_driverController = new Joystick(OperatorConstants.kDriverControllerPort);
-  private XboxController m_armController = new XboxController(OperatorConstants.kArmControllerPort);
+  private final Joystick m_driverController = new Joystick(OperatorConstants.kDriverControllerPort);
+  private final XboxController m_armController = new XboxController(OperatorConstants.kArmControllerPort);
 
   // Shuffleboard
-  private SendableChooser m_autoChooser;
-  private String m_auto1 = "Auto 1";
-  private String m_auto2 = "Auto 2";
-  private String m_auto3 = "Auto 3";
-
-  private Timer m_autoTimer = new Timer();
+  private final SendableChooser<Command> m_autoChooser;
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -101,8 +95,10 @@ public class RobotContainer {
             () -> m_vacuumSubsystem.vacuumOff(),
             m_vacuumSubsystem).withName("Off"));
 
-    m_autoChooser = new SendableChooser<String>();
+    m_autoChooser = new SendableChooser<>();
+    m_autoChooser.setDefaultOption("Auto 1", m_autoOneCmd);
 
+    SmartDashboard.putData(m_autoChooser);
     SmartDashboard.putData(m_driveSubsystem);
     SmartDashboard.putData(m_armSubsystem);
     SmartDashboard.putData(m_vacuumSubsystem);
@@ -139,37 +135,8 @@ public class RobotContainer {
     new JoystickButton(m_armController, XboxController.Button.kA.value).whileTrue(m_openLowerSolenoidCmd);
   }
 
-  /**
-   * Use this to pass the autonomous command to the main {@link Robot} class.
-   *
-   * @return the command to run in autonomous
-   */
-  // public Command getAutonomousCommand() {
-  //   return new ProxyCommand(
-  //       (Command) () -> {
-  //         m_autoTimer.reset();
-  //         m_autoTimer.start();
-  //         // if (m_autoTimer.get()<1){
-  //         m_armSubsystem.operateArm(1, false, 0, -1.0);
-  //         // } else {
-  //         // m_armSubsystem.operateArm(0, false, 0, -1);
-  //         // }
-  //         // m_driveSubsystem.drive(-0.5, 0, 0, 0, false);
-  //         m_autoTimer.stop();
-  //       });
-  //   // Use RunCommand for repeating code and InstantCommand for one-time
-  //   // c0.8,false,0,180);
-  //   // return new InstantCommand(
-  //   // () -> {
-
-  //   // },
-  //   // m_driveSubsystem).withName("Auto");
-
-  //   return null;
-  // }
-
   public Command getAutonomousCommand() {
-    return m_autoOneCmd;
+    return m_autoChooser.getSelected();
   }
 
 }

@@ -67,14 +67,12 @@ public final class Constants {
   public static final class ArmConstants {
     public static final int kRaiseMotorId = 23;
     public static final int kExtensionMotorId = 22;
-    // TODO: Ensure this value is correct
     public static final int kPivotMotorId = 21;
     
     public static final int kRaiseEncoderChannelA = 2;
     public static final int kRaiseEncoderChannelB = 3;
     public static final int kExtensionEncoderChannelA = 0;
     public static final int kExtensionEncoderChannelB = 1;
-    // TODO: Ensure these value are correct
     public static final int kPivotEncoderChannelA = 4;
     public static final int kPivotEncoderChannelB = 5;
 
@@ -87,7 +85,6 @@ public final class Constants {
     public static final boolean kExtensionEncoderInverted = false;
     public static final boolean kPivotEncoderInverted = false;
 
-    // TODO: Enure these values are correct
     public static final EncodingType kRaiseEncoderEncodingType = EncodingType.k1X;
     public static final EncodingType kExtensionEncoderEncodingType = EncodingType.k1X;
     public static final EncodingType kPivotEncoderEncodingType = EncodingType.k1X;
