@@ -53,8 +53,8 @@ public final class Constants {
     public static final double kFF = 0;
 
     // Slew rate values
-    public static final double kMagnitudeSlewRate = 0.8;
-    public static final double kRotationalSlewRate = 0.8;
+    public static final double kMagnitudeSlewRate = 0.9;
+    public static final double kRotationalSlewRate = 0.9;
   }
 
   public static final class VacuumConstants {
@@ -95,6 +95,10 @@ public final class Constants {
     public static final double kRaiseMotorPowerPercent = 1;
     public static final double kExtensionMotorPowerPercent = 1;
     public static final double kPivotMotorPowerPercent = 0.3;
+
+    // Encoder maximum limits
+    public static final double kRaiseEncoderMaxValue = -12584;
+    public static final double kExtensionEncoderMaxValue = 2682;
   }
 
   public static final class OperatorConstants {

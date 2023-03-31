@@ -21,6 +21,7 @@ public class ArmSubsystem extends SubsystemBase {
   private DigitalInput m_pivotUpperLimitSwitch;
   private DigitalInput m_pivotLowerLimitSwitch;
   private double m_desiredExtensionPower = 0;
+  private boolean m_calibrated = false;
 
   public ArmSubsystem() {
     m_raiseMotor = new VictorSPX(ArmConstants.kRaiseMotorId);
@@ -61,23 +62,30 @@ public class ArmSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("Raise Encoder Value", m_raiseEncoder.getDistance());
     SmartDashboard.putNumber("Extension Encoder Value", m_extensionEncoder.getDistance());
     SmartDashboard.putNumber("Pivot Encoder Value", m_pivotEncoder.getDistance());
+    SmartDashboard.putBoolean("Arm Calibrated", m_calibrated);
   }
 
   public void operateArm(double raiseValue, boolean extensionValue, double retractionValue, double pov) {
     double desiredRaiseMotorPower = raiseValue * ArmConstants.kRaiseMotorPowerPercent;
 
+    System.out.println(raiseValue);
+
     // Raise motor
-    if (desiredRaiseMotorPower > 0 && m_raiseLimitSwitch.get()) {
-      m_raiseMotor.set(ControlMode.PercentOutput, 0);
-    } else {
+    if (desiredRaiseMotorPower < 0 && m_raiseEncoder.getDistance() > ArmConstants.kRaiseEncoderMaxValue) {
       m_raiseMotor.set(ControlMode.PercentOutput, desiredRaiseMotorPower);
+    } else if (desiredRaiseMotorPower > 0 && !m_raiseLimitSwitch.get()) {
+      m_raiseMotor.set(ControlMode.PercentOutput, desiredRaiseMotorPower);
+    } else {
+      m_raiseMotor.set(ControlMode.PercentOutput, 0);
     }
 
     // Extension motor
-    if (extensionValue) {
+    if (extensionValue && m_extensionEncoder.getDistance() < ArmConstants.kExtensionEncoderMaxValue) {
       extendArm();
-    } else {
+    } else if (retractionValue > 0 && !m_extensionLimitSwitch.get()) {
       retractArm();
+    } else {
+      stopExtensionMotor();
     }
 
     // Pivot motor
@@ -88,7 +96,8 @@ public class ArmSubsystem extends SubsystemBase {
         m_pivotMotor.set(ControlMode.PercentOutput, -ArmConstants.kPivotMotorPowerPercent);
       }
     } else if (pov == 180) { // Down
-      if (m_pivotLowerLimitSwitch.get()) {
+      // if (m_pivotLowerLimitSwitch.get()) {
+      if (false) {
         m_pivotMotor.set(ControlMode.PercentOutput, 0);
       } else {
         m_pivotMotor.set(ControlMode.PercentOutput, ArmConstants.kPivotMotorPowerPercent);
@@ -108,5 +117,42 @@ public class ArmSubsystem extends SubsystemBase {
 
   public void stopExtensionMotor() {
     m_desiredExtensionPower = 0;
+  }
+
+  public void stopAllMotors() {
+    m_raiseMotor.set(ControlMode.PercentOutput, 0);
+    m_extensionMotor.set(ControlMode.PercentOutput, 0);
+    m_pivotMotor.set(ControlMode.PercentOutput, 0);
+  }
+
+  public void calibrate() {
+    // Calibrate pivot motor
+    if (!m_pivotLowerLimitSwitch.get()) {
+      m_pivotMotor.set(ControlMode.PercentOutput, -0.6);
+    } else {
+      m_pivotMotor.set(ControlMode.PercentOutput, 0);
+      m_pivotEncoder.reset();
+    }
+
+    // Calibrate extension motor
+    if (!m_extensionLimitSwitch.get()) {
+      m_extensionMotor.set(ControlMode.PercentOutput, -1);
+    } else {
+      m_extensionMotor.set(ControlMode.PercentOutput, 0);
+      m_extensionEncoder.reset();
+    }
+
+    // Calibrate raise motor
+    if (!m_raiseLimitSwitch.get()) {
+      m_raiseMotor.set(ControlMode.PercentOutput, 1);
+    } else {
+      m_raiseMotor.set(ControlMode.PercentOutput, 0);
+      m_raiseEncoder.reset();
+      m_calibrated = true;
+    }
+  }
+
+  public boolean isCalibrated() {
+    return m_calibrated;
   }
 }
