@@ -49,7 +49,7 @@ public class RobotContainer {
   private final RunVacuumCmd m_runVacuumCmd = new RunVacuumCmd(m_vacuumSubsystem);
   private final OpenUpperSolenoidCmd m_openUpperSolenoidCmd = new OpenUpperSolenoidCmd(m_vacuumSubsystem);
   private final OpenLowerSolenoidCmd m_openLowerSolenoidCmd = new OpenLowerSolenoidCmd(m_vacuumSubsystem);
-  private final AutoOneCmd m_autoOneCmd = new AutoOneCmd(m_armSubsystem);
+  private final AutoOneCmd m_autoOneCmd = new AutoOneCmd(m_armSubsystem, m_driveSubsystem);
 
   // Controllers
   private final Joystick m_driverController = new Joystick(OperatorConstants.kDriverControllerPort);
@@ -129,10 +129,10 @@ public class RobotContainer {
     new JoystickButton(m_armController, XboxController.Button.kRightBumper.value).whileTrue(m_runVacuumCmd);
 
     // Open upper solenoid
-    new JoystickButton(m_armController, XboxController.Button.kY.value).whileTrue(m_openUpperSolenoidCmd);
+    new JoystickButton(m_armController, XboxController.Button.kA.value).whileTrue(m_openUpperSolenoidCmd);
 
     // Open lower solenoid
-    new JoystickButton(m_armController, XboxController.Button.kA.value).whileTrue(m_openLowerSolenoidCmd);
+    new JoystickButton(m_armController, XboxController.Button.kY.value).whileTrue(m_openLowerSolenoidCmd);
   }
 
   public Command getAutonomousCommand() {

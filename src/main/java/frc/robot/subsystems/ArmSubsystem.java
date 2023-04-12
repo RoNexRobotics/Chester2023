@@ -63,6 +63,7 @@ public class ArmSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("Extension Encoder Value", m_extensionEncoder.getDistance());
     SmartDashboard.putNumber("Pivot Encoder Value", m_pivotEncoder.getDistance());
     SmartDashboard.putBoolean("Arm Calibrated", m_calibrated);
+    SmartDashboard.putBoolean("Extension Limit Switch", m_extensionLimitSwitch.get());
   }
 
   public void operateArm(double raiseValue, boolean extensionValue, double retractionValue, double pov) {
