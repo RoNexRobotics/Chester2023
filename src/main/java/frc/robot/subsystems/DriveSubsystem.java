@@ -159,12 +159,20 @@ public class DriveSubsystem extends SubsystemBase {
   }
 
   public void drive(double ySpeed, double rotSpeed, double swerveSpeed, double pov, boolean rateLimited) {
+    double desiredSwerveSpeed = 0.2;
+
+    if (swerveSpeed > 0.2) {
+      desiredSwerveSpeed = swerveSpeed;
+    } else {
+      desiredSwerveSpeed = 0.2;
+    }
+
     if (pov == -1 || pov == 0) { // Default or Up
       drive(ySpeed, rotSpeed, rateLimited);
     } else if (pov == 270) { // Swerve left
-      swerveLeft(swerveSpeed * DriveConstants.kSwervePowerPercent);
+      swerveLeft(desiredSwerveSpeed * DriveConstants.kSwervePowerPercent);
     } else if (pov == 90) { // Swerve right
-      swerveRight(swerveSpeed * DriveConstants.kSwervePowerPercent);
+      swerveRight(desiredSwerveSpeed * DriveConstants.kSwervePowerPercent);
     }
   }
 

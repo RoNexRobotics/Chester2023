@@ -46,11 +46,11 @@ public class AutoOneCmd extends CommandBase {
     m_autoTimer.start();
 
     if (m_autoTimer.get() < 1) {
-      m_armSubsystem.operateArm(-.7, false, 0, 180);//first value neg up pos down
+      m_armSubsystem.operateArm(-.7, false, false, 180);
     } else if (m_autoTimer.get() < 3) {
-      m_armSubsystem.operateArm(-7, false, 0, -1);
+      m_armSubsystem.operateArm(-7, false, false, -1);
     } else if (m_autoTimer.get() < 8) {
-      m_armSubsystem.operateArm(0, false, 0, -1);
+      m_armSubsystem.operateArm(0, false, false, -1);
       m_driveSubsystem.drive(0.5,0,false);
     } else if (m_autoTimer.get() < 11.25) { 
       m_driveSubsystem.drive(-0.5, 0, false);
@@ -58,12 +58,12 @@ public class AutoOneCmd extends CommandBase {
       m_driveSubsystem.drive(0,0,false);
     }
  
-  // Called once the command ends or is interrupted.
   }
-
+  
+  // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    m_armSubsystem.operateArm(0, false, 0, -1);
+    m_armSubsystem.operateArm(0, false, false, -1);
     m_autoTimer.stop();
   }
 

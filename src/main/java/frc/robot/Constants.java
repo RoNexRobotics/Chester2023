@@ -93,7 +93,7 @@ public final class Constants {
     public static final double kExtensionMotorPowerPercent = 1;
     public static final double kPivotMotorPowerPercent = 0.3;
 
-    // Encoder maximum limits
+    // Encoder maximum limits (After configuration)
     public static final double kRaiseEncoderMaxValue = -12584;
     public static final double kExtensionEncoderMaxValue = 2682;
   }
@@ -106,9 +106,7 @@ public final class Constants {
   }
 
   public static final class AutoConstants {
-    // Vision PID values
-    // TODO: Tune PID values
-    public static final double kVisionP = 1;
+    public static final double kVisionP = 0.3;
     public static final double kVisionI = 0;
     public static final double kVisionD = 0;
   }

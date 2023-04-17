@@ -15,12 +15,10 @@ public class ArmSubsystem extends SubsystemBase {
   private VictorSPX m_pivotMotor;
   private Encoder m_raiseEncoder;
   private Encoder m_extensionEncoder;
-  private Encoder m_pivotEncoder;
   private DigitalInput m_extensionLimitSwitch;
   private DigitalInput m_raiseLimitSwitch;
   private DigitalInput m_pivotUpperLimitSwitch;
   private DigitalInput m_pivotLowerLimitSwitch;
-  private double m_desiredExtensionPower = 0;
   private boolean m_calibrated = false;
 
   public ArmSubsystem() {
@@ -38,90 +36,64 @@ public class ArmSubsystem extends SubsystemBase {
       ArmConstants.kExtensionEncoderChannelB,
       ArmConstants.kExtensionEncoderInverted,
       ArmConstants.kExtensionEncoderEncodingType);
-    m_pivotEncoder = new Encoder(
-      ArmConstants.kPivotEncoderChannelA,
-      ArmConstants.kPivotEncoderChannelB,
-      ArmConstants.kPivotEncoderInverted,
-      ArmConstants.kPivotEncoderEncodingType
-    );
 
-    m_extensionLimitSwitch = new DigitalInput(ArmConstants.kExtensionLimitSwitchId);
     m_raiseLimitSwitch = new DigitalInput(ArmConstants.kRaiseLimitSwitchId);
+    m_extensionLimitSwitch = new DigitalInput(ArmConstants.kExtensionLimitSwitchId);
     m_pivotUpperLimitSwitch = new DigitalInput(ArmConstants.kPivotUpperLimitSwitchId);
     m_pivotLowerLimitSwitch = new DigitalInput(ArmConstants.kPivotLowerLimitSwitchId);
   }
 
   @Override
   public void periodic() {
-    if (m_desiredExtensionPower < 0 && m_extensionLimitSwitch.get()) {
-      m_extensionMotor.set(ControlMode.PercentOutput, 0);
-    } else {
-      m_extensionMotor.set(ControlMode.PercentOutput, m_desiredExtensionPower);
-    }
-
+    // Send values to SmartDashboard
     SmartDashboard.putNumber("Raise Encoder Value", m_raiseEncoder.getDistance());
     SmartDashboard.putNumber("Extension Encoder Value", m_extensionEncoder.getDistance());
-    SmartDashboard.putNumber("Pivot Encoder Value", m_pivotEncoder.getDistance());
     SmartDashboard.putBoolean("Arm Calibrated", m_calibrated);
+    SmartDashboard.putBoolean("Raise Limit Switch", m_raiseLimitSwitch.get());
     SmartDashboard.putBoolean("Extension Limit Switch", m_extensionLimitSwitch.get());
+    SmartDashboard.putBoolean("Pivot Upper Limit Switch", m_pivotUpperLimitSwitch.get());
+    SmartDashboard.putBoolean("Pivot Lower Limit Switch", m_pivotLowerLimitSwitch.get());
   }
 
-  public void operateArm(double raiseValue, boolean extensionValue, double retractionValue, double pov) {
-    double desiredRaiseMotorPower = raiseValue * ArmConstants.kRaiseMotorPowerPercent;
+  public void operateArm(double raisePower, boolean extending, boolean retracting, double pov) {
+    double desiredRaiseMotorPower = raisePower * ArmConstants.kRaiseMotorPowerPercent;
 
     // Raise motor
-    if (desiredRaiseMotorPower < 0 && m_raiseEncoder.getDistance() > ArmConstants.kRaiseEncoderMaxValue) {
+    if (desiredRaiseMotorPower < 0 && m_raiseEncoder.getDistance() > ArmConstants.kRaiseEncoderMaxValue) { // Up
       m_raiseMotor.set(ControlMode.PercentOutput, desiredRaiseMotorPower);
-    } else if (desiredRaiseMotorPower > 0 && !m_raiseLimitSwitch.get()) {
+    } else if (desiredRaiseMotorPower > 0 && !m_raiseLimitSwitch.get()) { // Down
       m_raiseMotor.set(ControlMode.PercentOutput, desiredRaiseMotorPower);
-    } else {
+    } else { // Stopped
       m_raiseMotor.set(ControlMode.PercentOutput, 0);
     }
 
     // Extension motor
-    if (extensionValue && m_extensionEncoder.getDistance() < ArmConstants.kExtensionEncoderMaxValue) {
-      extendArm();
-    } else if (retractionValue > 0 && !m_extensionLimitSwitch.get()) {
-      retractArm();
-    } else {
-      stopExtensionMotor();
+    if (extending && m_extensionEncoder.getDistance() < ArmConstants.kExtensionEncoderMaxValue) { // Extend
+      m_extensionMotor.set(ControlMode.PercentOutput, ArmConstants.kExtensionMotorPowerPercent);
+    } else if (retracting && !m_extensionLimitSwitch.get()) { // Retracting
+      m_extensionMotor.set(ControlMode.PercentOutput, -ArmConstants.kExtensionMotorPowerPercent);
+    } else { // Stopped
+      m_extensionMotor.set(ControlMode.PercentOutput, 0);
     }
 
     // Pivot motor
     if (pov == 0) { // Up
-      if (m_pivotUpperLimitSwitch.get()) {
-        m_pivotMotor.set(ControlMode.PercentOutput, 0);
-      } else {
+      if (!m_pivotUpperLimitSwitch.get()) {
         m_pivotMotor.set(ControlMode.PercentOutput, -ArmConstants.kPivotMotorPowerPercent);
+      } else {
+        m_pivotMotor.set(ControlMode.PercentOutput, 0);
       }
     } else if (pov == 180) { // Down
+      // TODO: Fix pivot lower limit switch
       // if (m_pivotLowerLimitSwitch.get()) {
       if (false) {
         m_pivotMotor.set(ControlMode.PercentOutput, 0);
       } else {
         m_pivotMotor.set(ControlMode.PercentOutput, ArmConstants.kPivotMotorPowerPercent);
       }
-    } else {
+    } else { // Stopped
       m_pivotMotor.set(ControlMode.PercentOutput, 0);
     }
-  }
-
-  public void extendArm() {
-    m_desiredExtensionPower = ArmConstants.kExtensionMotorPowerPercent;
-  }
-
-  public void retractArm() {
-    m_desiredExtensionPower = -ArmConstants.kExtensionMotorPowerPercent;
-  }
-
-  public void stopExtensionMotor() {
-    m_desiredExtensionPower = 0;
-  }
-
-  public void stopAllMotors() {
-    m_raiseMotor.set(ControlMode.PercentOutput, 0);
-    m_extensionMotor.set(ControlMode.PercentOutput, 0);
-    m_pivotMotor.set(ControlMode.PercentOutput, 0);
   }
 
   public void calibrate() {
@@ -130,7 +102,6 @@ public class ArmSubsystem extends SubsystemBase {
       m_pivotMotor.set(ControlMode.PercentOutput, -0.6);
     } else {
       m_pivotMotor.set(ControlMode.PercentOutput, 0);
-      m_pivotEncoder.reset();
     }
 
     // Calibrate extension motor
@@ -149,6 +120,12 @@ public class ArmSubsystem extends SubsystemBase {
       m_raiseEncoder.reset();
       m_calibrated = true;
     }
+  }
+
+  public void stopAllMotors() {
+    m_raiseMotor.set(ControlMode.PercentOutput, 0);
+    m_extensionMotor.set(ControlMode.PercentOutput, 0);
+    m_pivotMotor.set(ControlMode.PercentOutput, 0);
   }
 
   public boolean isCalibrated() {
