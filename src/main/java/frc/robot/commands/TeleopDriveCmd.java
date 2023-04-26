@@ -35,11 +35,11 @@ public class TeleopDriveCmd extends CommandBase {
   @Override
   public void execute() {
     m_driveSubsystem.drive(
-      MathUtil.applyDeadband(m_driverController.getX(), OperatorConstants.kDriverControllerDeadband),
+      MathUtil.applyDeadband(m_driverController.getY(), OperatorConstants.kDriverControllerDeadband),
       MathUtil.applyDeadband(m_driverController.getZ(), OperatorConstants.kDriverControllerDeadband),
-      m_driverController.getThrottle(),
+      -m_driverController.getThrottle(),
       m_driverController.getPOV(),
-      true
+      false
     );
   }
 

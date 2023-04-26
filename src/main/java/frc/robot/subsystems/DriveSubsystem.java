@@ -72,10 +72,10 @@ public class DriveSubsystem extends SubsystemBase {
     m_rearLeftTurnEncoder = m_rearLeftTurnMotor.getEncoder();
     m_rearRightTurnEncoder = m_rearRightTurnMotor.getEncoder();
 
-    m_frontLeftTurnMotor.setInverted(DriveConstants.kFrontLeftTurnEncoderInverted);
-    m_frontRightTurnMotor.setInverted(DriveConstants.kFrontRightTurnEncoderInverted);
-    m_rearLeftTurnMotor.setInverted(DriveConstants.kRearLeftTurnEncoderInverted);
-    m_rearRightTurnMotor.setInverted(DriveConstants.kRearRightTurnEncoderInverted);
+    m_frontLeftTurnMotor.setInverted(DriveConstants.kFrontLeftTurnMotorInverted);
+    m_frontRightTurnMotor.setInverted(DriveConstants.kFrontRightTurnMotorInverted);
+    m_rearLeftTurnMotor.setInverted(DriveConstants.kRearLeftTurnMotorInverted);
+    m_rearRightTurnMotor.setInverted(DriveConstants.kRearRightTurnMotorInverted);
 
     // Reset turn Spark Maxs to factory defaults
     m_frontLeftTurnMotor.restoreFactoryDefaults();

@@ -27,18 +27,13 @@ public final class Constants {
     public static final int kFrontRightTurnMotorId = 6;
     public static final int kRearRightTurnMotorId = 8;
 
-    public static final boolean kFrontLeftTurnEncoderInverted = false;
-    public static final boolean kFrontRightTurnEncoderInverted = false;
-    public static final boolean kRearLeftTurnEncoderInverted = false;
-    public static final boolean kRearRightTurnEncoderInverted = false;
+    public static final boolean kFrontLeftTurnMotorInverted = false;
+    public static final boolean kFrontRightTurnMotorInverted = false;
+    public static final boolean kRearLeftTurnMotorInverted = false;
+    public static final boolean kRearRightTurnMotorInverted = false;
 
     public static final boolean kLeftDriveInverted = true;
     public static final boolean kRightDriveInverted = false;
-
-    public static final double kFrontLeftAngularOffset = 0;
-    public static final double kFrontRightAngularOffset = 0;
-    public static final double kRearLeftAngularOffset = Math.PI;
-    public static final double kRearRightAngularOffset = Math.PI / 2;
 
     // Speeds
     public static final double kPowerPercent = 1;
@@ -57,11 +52,15 @@ public final class Constants {
     public static final double kRotationalSlewRate = 0.9;
   }
 
-  public static final class VacuumConstants {
-    public static final int kVacuumMotorId = 20;
+  public static final class SwerveModuleConstants {
+    // PID controller values
+    public static final double kDriveP = 0.5;
+    public static final double kDriveI = 0;
+    public static final double kDriveD = 0;
 
-    public static final int kUpperSolenoidId = 1;
-    public static final int kLowerSolenoidId = 0;
+    public static final double kTurnP = 0.5;
+    public static final double kTurnI = 0;
+    public static final double kTurnD = 0.2;
   }
 
   public static final class ArmConstants {
@@ -73,8 +72,6 @@ public final class Constants {
     public static final int kRaiseEncoderChannelB = 3;
     public static final int kExtensionEncoderChannelA = 0;
     public static final int kExtensionEncoderChannelB = 1;
-    public static final int kPivotEncoderChannelA = 4;
-    public static final int kPivotEncoderChannelB = 5;
 
     public static final int kExtensionLimitSwitchId = 9;
     public static final int kRaiseLimitSwitchId = 8;
@@ -83,7 +80,6 @@ public final class Constants {
 
     public static final boolean kRaiseEncoderInverted = false;
     public static final boolean kExtensionEncoderInverted = false;
-    public static final boolean kPivotEncoderInverted = false;
 
     public static final EncodingType kRaiseEncoderEncodingType = EncodingType.k1X;
     public static final EncodingType kExtensionEncoderEncodingType = EncodingType.k1X;
@@ -96,6 +92,13 @@ public final class Constants {
     // Encoder maximum limits (After configuration)
     public static final double kRaiseEncoderMaxValue = -12584;
     public static final double kExtensionEncoderMaxValue = 2682;
+  }
+
+  public static final class VacuumConstants {
+    public static final int kVacuumMotorId = 20;
+
+    public static final int kUpperSolenoidId = 1;
+    public static final int kLowerSolenoidId = 0;
   }
 
   public static final class OperatorConstants {
