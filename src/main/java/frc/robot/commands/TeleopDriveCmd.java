@@ -8,17 +8,17 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants.OperatorConstants;
-import frc.robot.subsystems.DriveSubsystem;
+import frc.robot.subsystems.TankDriveSubsystem;
 
 public class TeleopDriveCmd extends CommandBase {
   // Subsystems
-  private DriveSubsystem m_driveSubsystem;
+  private TankDriveSubsystem m_driveSubsystem;
 
   // Controllers
   private Joystick m_driverController;
 
   /** Creates a new TeleopDrive. */
-  public TeleopDriveCmd(DriveSubsystem driveSubsystem, Joystick driverController) {
+  public TeleopDriveCmd(TankDriveSubsystem driveSubsystem, Joystick driverController) {
     m_driveSubsystem = driveSubsystem;
 
     m_driverController = driverController;

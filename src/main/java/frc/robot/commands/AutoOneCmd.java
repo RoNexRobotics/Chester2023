@@ -7,18 +7,18 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.ArmSubsystem;
-import frc.robot.subsystems.DriveSubsystem;
+import frc.robot.subsystems.TankDriveSubsystem;
 
 public class AutoOneCmd extends CommandBase {
   // Subsystems
   ArmSubsystem m_armSubsystem;
-  DriveSubsystem m_driveSubsystem;
+  TankDriveSubsystem m_driveSubsystem;
   
 
   private final Timer m_autoTimer = new Timer();
   
   /** Creates a new AutoOneCmd. */
-  public AutoOneCmd(ArmSubsystem armSubsystem, DriveSubsystem driveSubsystem) {
+  public AutoOneCmd(ArmSubsystem armSubsystem, TankDriveSubsystem driveSubsystem) {
     m_armSubsystem = armSubsystem;
     m_driveSubsystem = driveSubsystem;
 

@@ -5,14 +5,14 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.subsystems.DriveSubsystem;
+import frc.robot.subsystems.TankDriveSubsystem;
 
 public class ResetDriveEncodersCmd extends CommandBase {
   // Subsystems
-  private DriveSubsystem m_driveSubsystem;
+  private TankDriveSubsystem m_driveSubsystem;
 
   /** Creates a new ResetDriveEncodersCmd. */
-  public ResetDriveEncodersCmd(DriveSubsystem driveSubsystem) {
+  public ResetDriveEncodersCmd(TankDriveSubsystem driveSubsystem) {
     // Use addRequirements() here to declare subsystem dependencies.
     m_driveSubsystem = driveSubsystem;
 

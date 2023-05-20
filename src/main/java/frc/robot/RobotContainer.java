@@ -24,7 +24,7 @@ import frc.robot.commands.RunVacuumCmd;
 import frc.robot.commands.TeleopArmCmd;
 import frc.robot.commands.TeleopDriveCmd;
 import frc.robot.subsystems.ArmSubsystem;
-import frc.robot.subsystems.DriveSubsystem;
+import frc.robot.subsystems.TankDriveSubsystem;
 import frc.robot.subsystems.VacuumSubsystem;
 
 /**
@@ -42,7 +42,7 @@ public class RobotContainer {
   private final XboxController m_operatorController = new XboxController(OperatorConstants.kArmControllerPort);
 
   // Subsystems
-  private final DriveSubsystem m_driveSubsystem = new DriveSubsystem();
+  private final TankDriveSubsystem m_driveSubsystem = new TankDriveSubsystem();
   private final ArmSubsystem m_armSubsystem = new ArmSubsystem();
   private final VacuumSubsystem m_vacuumSubsystem = new VacuumSubsystem();
 
