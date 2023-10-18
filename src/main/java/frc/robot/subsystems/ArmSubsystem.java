@@ -56,6 +56,7 @@ public class ArmSubsystem extends SubsystemBase {
   }
 
   public void operateArm(double raisePower, boolean extending, boolean retracting, double pov) {
+    SmartDashboard.putNumber("POV", pov);
     double desiredRaiseMotorPower = raisePower * ArmConstants.kRaiseMotorPowerPercent;
 
     // Raise motor
@@ -78,18 +79,21 @@ public class ArmSubsystem extends SubsystemBase {
 
     // Pivot motor
     if (pov == 0) { // Up
-      if (!m_pivotUpperLimitSwitch.get()) {
+      SmartDashboard.putString("Note", "Pivot Motor Running Up!");
+      // if (!m_pivotUpperLimitSwitch.get()) {
+      if (true) {
         m_pivotMotor.set(ControlMode.PercentOutput, -ArmConstants.kPivotMotorPowerPercent);
       } else {
         m_pivotMotor.set(ControlMode.PercentOutput, 0);
       }
     } else if (pov == 180) { // Down
+      SmartDashboard.putString("Note", "Pivot Motor Running Down!");
       // TODO: Fix pivot lower limit switch
-      // if (m_pivotLowerLimitSwitch.get()) {
-      if (false) {
-        m_pivotMotor.set(ControlMode.PercentOutput, 0);
-      } else {
+      // if (!m_pivotLowerLimitSwitch.get()) {
+      if (true) {
         m_pivotMotor.set(ControlMode.PercentOutput, ArmConstants.kPivotMotorPowerPercent);
+      } else {
+        m_pivotMotor.set(ControlMode.PercentOutput, 0);
       }
     } else { // Stopped
       m_pivotMotor.set(ControlMode.PercentOutput, 0);
@@ -98,7 +102,8 @@ public class ArmSubsystem extends SubsystemBase {
 
   public void calibrate() {
     // Calibrate pivot motor
-    if (!m_pivotLowerLimitSwitch.get()) {
+    // if (!m_pivotLowerLimitSwitch.get()) {
+    if (true) {
       m_pivotMotor.set(ControlMode.PercentOutput, -0.6);
     } else {
       m_pivotMotor.set(ControlMode.PercentOutput, 0);

@@ -18,6 +18,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.DriveConstants;
+import frc.robot.Constants.ModuleConstants;
 
 public class TankDriveSubsystem extends SubsystemBase {
   private CANSparkMax m_frontLeftDriveMotor;
@@ -72,16 +73,17 @@ public class TankDriveSubsystem extends SubsystemBase {
     m_rearLeftTurnEncoder = m_rearLeftTurnMotor.getEncoder();
     m_rearRightTurnEncoder = m_rearRightTurnMotor.getEncoder();
 
-    m_frontLeftTurnMotor.setInverted(DriveConstants.kFrontLeftTurnMotorInverted);
-    m_frontRightTurnMotor.setInverted(DriveConstants.kFrontRightTurnMotorInverted);
-    m_rearLeftTurnMotor.setInverted(DriveConstants.kRearLeftTurnMotorInverted);
-    m_rearRightTurnMotor.setInverted(DriveConstants.kRearRightTurnMotorInverted);
-
     // Reset turn Spark Maxs to factory defaults
     m_frontLeftTurnMotor.restoreFactoryDefaults();
     m_frontRightTurnMotor.restoreFactoryDefaults();
     m_rearLeftTurnMotor.restoreFactoryDefaults();
     m_rearRightTurnMotor.restoreFactoryDefaults();
+    
+    m_frontLeftTurnMotor.setInverted(DriveConstants.kFrontLeftTurnMotorInverted);
+    m_frontRightTurnMotor.setInverted(DriveConstants.kFrontRightTurnMotorInverted);
+    m_rearLeftTurnMotor.setInverted(DriveConstants.kRearLeftTurnMotorInverted);
+    m_rearRightTurnMotor.setInverted(DriveConstants.kRearRightTurnMotorInverted);
+
 
     // Configure turn Spark Maxs' idle mode
     m_frontLeftTurnMotor.setIdleMode(IdleMode.kBrake);
@@ -152,10 +154,10 @@ public class TankDriveSubsystem extends SubsystemBase {
       m_rearRightTurnPIDController.setReference(m_desiredAngle, ControlType.kPosition);
     }
 
-    SmartDashboard.putNumber("Front Left Encoder", m_frontLeftTurnEncoder.getPosition());
-    SmartDashboard.putNumber("Front Right Encoder", m_frontRightTurnEncoder.getPosition());
-    SmartDashboard.putNumber("Rear Left Encoder", m_rearLeftTurnEncoder.getPosition());
-    SmartDashboard.putNumber("Rear Right Encoder", m_rearRightTurnEncoder.getPosition());
+    SmartDashboard.putNumber("Front Left Encoder", m_frontLeftTurnEncoder.getPosition() * ModuleConstants.kTurnMotorRatio);
+    SmartDashboard.putNumber("Front Right Encoder", m_frontRightTurnEncoder.getPosition() * ModuleConstants.kTurnMotorRatio);
+    SmartDashboard.putNumber("Rear Left Encoder", m_rearLeftTurnEncoder.getPosition() * ModuleConstants.kTurnMotorRatio);
+    SmartDashboard.putNumber("Rear Right Encoder", m_rearRightTurnEncoder.getPosition() * ModuleConstants.kTurnMotorRatio);
   }
 
   public void drive(double ySpeed, double rotSpeed, double swerveSpeed, double pov, boolean rateLimited) {

@@ -50,6 +50,11 @@ public final class Constants {
     public static final int kRearRightTurnMotorId = 8;
 
     // Motor configuration
+    public static final boolean kFrontLeftDriveMotorInverted = false;
+    public static final boolean kFrontRightDriveMotorInverted = false;
+    public static final boolean kRearLeftDriveMotorInverted = false;
+    public static final boolean kRearRightDriveMotorInverted = true;
+
     public static final boolean kFrontLeftTurnMotorInverted = false;
     public static final boolean kFrontRightTurnMotorInverted = false;
     public static final boolean kRearLeftTurnMotorInverted = false;
@@ -77,7 +82,7 @@ public final class Constants {
 
   public static final class ModuleConstants {
     // Gear reductions
-    public static final double kDriveMotorRatio = 7.36; // 7.36:1 // TODO: Check this value
+    public static final double kDriveMotorRatio = 7.36; // 7.36:1 // TODO: Check this value. Update: Seems decent enough
     public static final double kTurnMotorRatio = 1 / 1.9098593171027440292266051604702; // 1:1.9098593171027440292266051604702
 
     public static final double kDriveMotorFreeSpeed = NeoMotorConstants.kFreeSpeedRpm;
@@ -104,7 +109,7 @@ public final class Constants {
     public static final double kDriveMinOutput = -1;
     public static final double kDriveMaxOutput = 1;
 
-    public static final double kTurnP = 0.5;
+    public static final double kTurnP = 0.8;
     public static final double kTurnI = 0;
     public static final double kTurnD = 0.2;
     public static final double kTurnFF = 0;

@@ -24,6 +24,7 @@ import frc.robot.commands.RunVacuumCmd;
 import frc.robot.commands.TeleopArmCmd;
 import frc.robot.commands.TeleopDriveCmd;
 import frc.robot.subsystems.ArmSubsystem;
+import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.TankDriveSubsystem;
 import frc.robot.subsystems.VacuumSubsystem;
 
@@ -42,13 +43,14 @@ public class RobotContainer {
   private final XboxController m_operatorController = new XboxController(OperatorConstants.kArmControllerPort);
 
   // Subsystems
+  // private final DriveSubsystem m_newDriveSubsystem = new DriveSubsystem();
   private final TankDriveSubsystem m_driveSubsystem = new TankDriveSubsystem();
   private final ArmSubsystem m_armSubsystem = new ArmSubsystem();
   private final VacuumSubsystem m_vacuumSubsystem = new VacuumSubsystem();
 
   // Commands
   private final TeleopDriveCmd m_teleopDriveCmd = new TeleopDriveCmd(m_driveSubsystem, m_driverController);
-  private final ResetDriveEncodersCmd m_resetDriveEncodersCmd = new ResetDriveEncodersCmd(m_driveSubsystem);
+  // private final ResetDriveEncodersCmd m_resetDriveEncodersCmd = new ResetDriveEncodersCmd(m_driveSubsystem);
   private final TeleopArmCmd m_teleopArmCmd = new TeleopArmCmd(m_armSubsystem, m_operatorController);
   private final CalibrateArmCmd m_calibrateArmCmd = new CalibrateArmCmd(m_armSubsystem);
   private final RunVacuumCmd m_runVacuumCmd = new RunVacuumCmd(m_vacuumSubsystem);
@@ -68,7 +70,7 @@ public class RobotContainer {
 
     CameraServer.startAutomaticCapture();
 
-    m_driveSubsystem.setDefaultCommand(m_teleopDriveCmd);
+    // m_driveSubsystem.setDefaultCommand(m_teleopDriveCmd);
 
     m_armSubsystem.setDefaultCommand(m_teleopArmCmd);
 
@@ -77,11 +79,11 @@ public class RobotContainer {
             () -> m_vacuumSubsystem.vacuumOff(),
             m_vacuumSubsystem).withName("Off"));
 
-    m_autoChooser.setDefaultOption("Auto 1", m_autoOneCmd);
+    // m_autoChooser.setDefaultOption("Auto 1", m_autoOneCmd);
     m_autoChooser.addOption("No Auto", null);
 
     SmartDashboard.putData("Auto Chooser", m_autoChooser);
-    SmartDashboard.putData("Drive Subsystem", m_driveSubsystem);
+    // SmartDashboard.putData("Drive Subsystem", m_driveSubsystem);
     SmartDashboard.putData("Arm Subsystem", m_armSubsystem);
     SmartDashboard.putData("Vacuum Subsystem", m_vacuumSubsystem);
   }
@@ -102,7 +104,7 @@ public class RobotContainer {
    */
   private void configureBindings() {
     // Reset drive encoders
-    new JoystickButton(m_driverController, 6).whileTrue(m_resetDriveEncodersCmd);
+    // new JoystickButton(m_driverController, 6).whileTrue(m_resetDriveEncodersCmd);
 
     // Calibrate arm
     new JoystickButton(m_operatorController, XboxController.Button.kX.value).whileTrue(m_calibrateArmCmd);
